@@ -1,122 +1,152 @@
-// =========================================
-// ONEUI WEB LIBRARY v4.0 - LOGIC
-// =========================================
+/**
+ * OneUI Web Library v5.0.0
+ * Core Logic & Gesture Engine
+ */
 
-// 1. Auto-Inject Dependencies
-function loadDependencies() {
-    if (!document.querySelector('script[src*="phosphor-icons"]')) {
+const CONFIG = {
+    cdnIcons: 'https://unpkg.com/@phosphor-icons/web',
+    themeAttr: 'data-theme'
+};
+
+/**
+ * Dynamic Resource Loader
+ */
+const loadResources = () => {
+    if (!document.querySelector(`script[src="${CONFIG.cdnIcons}"]`)) {
         const script = document.createElement('script');
-        script.src = "https://unpkg.com/@phosphor-icons/web";
+        script.src = CONFIG.cdnIcons;
         document.head.appendChild(script);
     }
-}
+};
 
-// 2. Ripple Engine (Optimized)
-function initRipples() {
-    document.addEventListener('mousedown', createRipple);
-    document.addEventListener('touchstart', createRipple, { passive: true });
+/**
+ * Ripple Effect Engine
+ * Attaches to document to handle all interactive elements dynamically.
+ */
+const initRippleEngine = () => {
+    document.addEventListener('mousedown', triggerRipple);
+    document.addEventListener('touchstart', triggerRipple, { passive: true });
 
-    function createRipple(e) {
-        const target = e.target.closest('.oui-btn, .oui-item, .oui-chip, .oui-nav-item');
+    function triggerRipple(e) {
+        const target = e.target.closest('.oui-btn, .oui-list-item, .oui-nav-link');
         if (!target || target.disabled) return;
 
-        const circle = document.createElement('span');
-        const diameter = Math.max(target.clientWidth, target.clientHeight);
-        const radius = diameter / 2;
         const rect = target.getBoundingClientRect();
-        
-        // Handle touch vs mouse coordinates
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const size = Math.max(rect.width, rect.height);
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
-        circle.style.width = circle.style.height = `${diameter}px`;
-        circle.style.left = `${clientX - rect.left - radius}px`;
-        circle.style.top = `${clientY - rect.top - radius}px`;
-        circle.classList.add('ripple');
-        
-        const existing = target.getElementsByClassName('ripple')[0];
+        const ripple = document.createElement('span');
+        ripple.className = 'oui-ripple';
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${x - size/2}px`;
+        ripple.style.top = `${y - size/2}px`;
+
+        const existing = target.querySelector('.oui-ripple');
         if (existing) existing.remove();
+
+        target.appendChild(ripple);
+    }
+};
+
+/**
+ * Bottom Sheet Manager with Swipe Physics
+ */
+class SheetManager {
+    constructor() {
+        this.overlay = this.createOverlay();
+        this.activeSheet = null;
+        this.startY = 0;
+        this.currentY = 0;
+        this.isDragging = false;
+    }
+
+    createOverlay() {
+        const el = document.createElement('div');
+        el.className = 'oui-backdrop';
+        el.onclick = () => this.closeAll();
+        document.body.appendChild(el);
+        return el;
+    }
+
+    open(id) {
+        const sheet = document.getElementById(id);
+        if (!sheet) return;
+
+        this.activeSheet = sheet;
+        this.overlay.classList.add('is-visible');
+        sheet.classList.add('is-visible');
         
-        target.appendChild(circle);
+        // Attach Gesture Listeners
+        this.attachGestures(sheet);
     }
-}
 
-// 3. Overlay Manager (Dialogs & Sheets)
-export function toggleOverlay(id) {
-    const el = document.getElementById(id);
-    const backdrop = document.getElementById('oui-backdrop');
-    
-    if (el.classList.contains('active')) {
-        el.classList.remove('active');
-        backdrop.classList.remove('active');
-    } else {
-        // Close others first
-        document.querySelectorAll('.oui-sheet.active, .oui-dialog.active').forEach(e => e.classList.remove('active'));
-        el.classList.add('active');
-        backdrop.classList.add('active');
+    closeAll() {
+        if (this.activeSheet) {
+            this.activeSheet.classList.remove('is-visible');
+            this.activeSheet.style.transform = ''; // Reset inline styles
+            this.activeSheet = null;
+        }
+        this.overlay.classList.remove('is-visible');
     }
-}
 
-// 4. Tab/Segment Logic
-export function initTabs() {
-    const segments = document.querySelectorAll('.oui-segment-btn');
-    segments.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            const parent = btn.closest('.oui-segments');
-            const glider = parent.querySelector('.oui-segment-glider');
-            
-            parent.querySelectorAll('.oui-segment-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            // Move Glider
-            glider.style.transform = `translateX(${index * 100}%)`;
-        });
-    });
-}
-
-// 5. Initialization
-export function initOneUI() {
-    console.log("OneUI v4.0 (Ultra) Initialized 🚀");
-    loadDependencies();
-    initRipples();
-    initTabs();
-    
-    // Create Backdrop
-    if (!document.getElementById('oui-backdrop')) {
-        const bd = document.createElement('div');
-        bd.id = 'oui-backdrop';
-        bd.className = 'oui-overlay-backdrop';
-        bd.onclick = () => {
-            document.querySelectorAll('.active').forEach(e => e.classList.remove('active'));
+    attachGestures(sheet) {
+        sheet.ontouchstart = (e) => {
+            this.startY = e.touches[0].clientY;
+            this.isDragging = true;
+            sheet.style.transition = 'none'; // Disable spring during drag
         };
-        document.body.appendChild(bd);
-    }
 
-    // Auto Dark Mode
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.setAttribute('data-theme', 'dark');
+        sheet.ontouchmove = (e) => {
+            if (!this.isDragging) return;
+            const deltaY = e.touches[0].clientY - this.startY;
+            
+            // Only allow dragging down
+            if (deltaY > 0) {
+                e.preventDefault();
+                sheet.style.transform = `translateY(${deltaY}px)`;
+            }
+        };
+
+        sheet.ontouchend = (e) => {
+            this.isDragging = false;
+            sheet.style.transition = ''; // Re-enable spring
+            const deltaY = e.changedTouches[0].clientY - this.startY;
+
+            // Threshold to close (100px)
+            if (deltaY > 100) {
+                this.closeAll();
+            } else {
+                sheet.style.transform = ''; // Bounce back
+            }
+        };
     }
 }
 
-// 6. Theme Toggle
-export function toggleTheme() {
-    const html = document.documentElement;
-    const current = html.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', next);
-    return next;
-}
+// Singleton Instance
+const sheetManager = new SheetManager();
 
-// 7. Toast
-export function showToast(message) {
-    let toast = document.getElementById('oui-toast');
-    if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'oui-toast';
-        document.body.appendChild(toast);
-    }
-    toast.innerText = message;
-    toast.className = "show";
-    if (toast.timeout) clearTimeout(toast.timeout);
-    toast.timeout = setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
-}
+/**
+ * Public API
+ */
+export const OneUI = {
+    init: () => {
+        loadResources();
+        initRippleEngine();
+        
+        // Auto Dark Mode
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute(CONFIG.themeAttr, 'dark');
+        }
+        console.info('OneUI v5.0 Ready');
+    },
+    
+    toggleTheme: () => {
+        const root = document.documentElement;
+        const isDark = root.getAttribute(CONFIG.themeAttr) === 'dark';
+        root.setAttribute(CONFIG.themeAttr, isDark ? 'light' : 'dark');
+    },
+
+    openSheet: (id) => sheetManager.open(id),
+    closeSheet: () => sheetManager.closeAll()
+};

@@ -1,126 +1,136 @@
-/* ==========================================================================
-   ONEUI WEB LIBRARY v8.0 - APEX STABLE
-   ========================================================================== */
+/* 
+   Modernize UI CDN v1.0
+   Drop-in CSS to make any site look premium.
+*/
 
-/* --- 1. FONTS --- */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap');
 
 :root {
-    --oui-primary: #007afe;
-    --oui-primary-dim: rgba(0, 122, 254, 0.12);
-    --oui-success: #34c759;
-    --oui-danger: #ff3b30;
-    --oui-bg: #f2f2f2;
-    --oui-surface: #ffffff;
-    --oui-surface-alt: #f7f7f7;
-    --oui-border: #e0e0e0;
-    --oui-divider: #f0f0f0;
-    --oui-text: #000000;
-    --oui-text-sec: #666666;
-    --oui-radius-xl: 26px;
-    --oui-radius-m: 12px;
+    --brand: #0070f3;
+    --bg: #ffffff;
+    --fg: #000000;
+    --accents-1: #fafafa;
+    --accents-2: #eaeaea;
+    --accents-3: #999999;
+    --radius: 12px;
+    --shadow: 0 5px 20px rgba(0,0,0,0.05);
 }
 
 [data-theme="dark"] {
-    --oui-bg: #000000;
-    --oui-surface: #1c1c1c;
-    --oui-surface-alt: #262626;
-    --oui-border: #333333;
-    --oui-divider: #2a2a2a;
-    --oui-text: #ffffff;
-    --oui-text-sec: #a0a0a0;
+    --bg: #000000;
+    --fg: #ffffff;
+    --accents-1: #111111;
+    --accents-2: #333333;
+    --accents-3: #888888;
+    --shadow: 0 5px 30px rgba(0,0,0,0.3);
 }
 
-/* --- 2. THE ULTIMATE SCROLLBAR (Cross-Browser) --- */
-html { scrollbar-gutter: stable; }
-::-webkit-scrollbar { width: 12px; display: block !important; }
-::-webkit-scrollbar-track { background: var(--oui-bg); }
-::-webkit-scrollbar-thumb { 
-    background-color: #bbbbbb; 
-    border-radius: 20px; 
-    border: 3px solid var(--oui-bg); 
+/* 1. GLOBAL ENHANCEMENTS */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
-::-webkit-scrollbar-thumb:hover { background-color: #999; }
-* { scrollbar-width: thin; scrollbar-color: #bbbbbb var(--oui-bg); }
 
-/* --- 3. LENIS SMOOTH SCROLL CSS --- */
-html.lenis { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-.lenis.lenis-stopped { overflow: hidden; }
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
 
-/* --- 4. BASE STYLES --- */
 body {
-    font-family: 'Outfit', sans-serif;
-    background-color: var(--oui-bg);
-    color: var(--oui-text);
     margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--bg);
+    color: var(--fg);
     line-height: 1.6;
-    transition: background-color 0.3s;
+    transition: background 0.3s ease;
 }
 
-/* --- 5. COMPONENTS --- */
-.oui-card {
-    background: var(--oui-surface);
-    border-radius: var(--oui-radius-xl);
+/* 2. PREMIUM SCROLLBAR */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { 
+    background: var(--accents-2); 
+    border-radius: 20px; 
+    border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accents-3); }
+
+/* 3. TYPOGRAPHY */
+h1, h2, h3, h4 {
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.04em;
+    margin-top: 0;
+}
+
+h1 { font-size: 3.5rem; font-weight: 800; }
+h2 { font-size: 2.2rem; font-weight: 700; }
+
+a {
+    color: var(--brand);
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+a:hover { opacity: 0.7; }
+
+/* 4. AUTO-MODERNIZE NATIVE ELEMENTS */
+button, .btn {
+    appearance: none;
+    background: var(--fg);
+    color: var(--bg);
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+button:active { transform: scale(0.96); }
+
+input, textarea, select {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--accents-1);
+    border: 1px solid var(--accents-2);
+    border-radius: var(--radius);
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--brand);
+    background: var(--bg);
+}
+
+/* 5. UNIVERSAL CARD CLASS */
+.card {
+    background: var(--bg);
+    border: 1px solid var(--accents-2);
+    border-radius: var(--radius);
     padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-    border: 1px solid transparent;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
 }
-[data-theme="dark"] .oui-card { border-color: var(--oui-border); }
+.card:hover { transform: translateY(-4px); }
 
-/* Buttons */
-.oui-btn {
-    padding: 14px 24px; border: none; border-radius: 999px;
-    font-family: inherit; font-weight: 600; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-.oui-btn:active { transform: scale(0.96); }
-.oui-btn-primary { background: var(--oui-primary); color: white; }
-.oui-btn-black { background: #000; color: #fff; }
-.oui-btn-white { background: #fff; color: #000; border: 1px solid var(--oui-border); }
-[data-theme="dark"] .oui-btn-black { background: #333; }
-
-/* Forms (Fixed UI) */
-.oui-input-group {
-    position: relative; margin-bottom: 15px;
-    background: var(--oui-surface-alt); border-radius: 16px;
-    border: 1px solid transparent; transition: 0.3s;
-}
-.oui-input-group:focus-within { background: var(--oui-surface); border-color: var(--oui-primary); }
-.oui-input {
-    width: 100%; background: transparent; border: none;
-    font-size: 1.1rem; color: var(--oui-text); padding: 28px 18px 10px;
-}
-.oui-label-float {
-    position: absolute; top: 18px; left: 18px; font-size: 1.1rem;
-    color: var(--oui-text-sec); pointer-events: none; transition: 0.2s;
-}
-.oui-input:focus ~ .oui-label-float, .oui-input:not(:placeholder-shown) ~ .oui-label-float {
-    transform: translateY(-10px) scale(0.8); color: var(--oui-primary);
+/* 6. UTILITIES */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 60px 24px;
 }
 
-/* Custom Check & Radio */
-.oui-check, .oui-radio { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-.oui-check input, .oui-radio input { display: none; }
-.oui-check-box, .oui-radio-box {
-    width: 24px; height: 24px; border: 2px solid var(--oui-border);
-    background: var(--oui-surface-alt); display: flex; align-items: center; justify-content: center;
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
 }
-.oui-radio-box { border-radius: 50%; }
-.oui-check-box { border-radius: 6px; }
-input:checked + .oui-check-box, input:checked + .oui-radio-box { 
-    background: var(--oui-primary); border-color: var(--oui-primary); 
-}
-input:checked + .oui-check-box::after { content: '✓'; color: white; font-weight: bold; }
-input:checked + .oui-radio-box::after { content: ''; width: 10px; height: 10px; background: white; border-radius: 50%; }
-
-/* Typography Helpers */
-.oui-h1 { font-size: 2.5rem; font-weight: 700; margin: 0; }
-.oui-code { font-family: 'Fira Code', monospace; background: #1e1e1e; color: #50fa7b; padding: 20px; border-radius: 12px; overflow-x: auto; }
-
-/* Desktop Grid */
-.oui-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }

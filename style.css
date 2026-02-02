@@ -1,12 +1,11 @@
 /* ==========================================================================
-   ONEUI WEB LIBRARY v6.1 ("SILK" STABLE)
+   ONEUI WEB LIBRARY v7.0 - OFFICIAL DESIGN SYSTEM
    ========================================================================== */
 
-/* --- 1. CORE IMPORTS & FONTS --- */
+/* --- 1. FONTS --- */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap'); /* For Code */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
 
-/* --- 2. DESIGN TOKENS --- */
 :root {
     /* Brand Colors */
     --oui-primary: #007afe;
@@ -18,7 +17,7 @@
     --oui-warning: #ffcc00;
     --oui-danger: #ff3b30;
     
-    /* Neutral Colors (Light Mode) */
+    /* Neutrals - Light */
     --oui-bg: #f2f2f2;
     --oui-surface: #ffffff;
     --oui-surface-alt: #f7f7f7;
@@ -26,50 +25,64 @@
     --oui-border: #e0e0e0;
     --oui-divider: #f0f0f0;
     
-    /* Text Colors */
+    /* Text - Light */
     --oui-text: #000000;
     --oui-text-sec: #666666;
     --oui-text-ter: #999999;
 
-    /* Dimensions */
-    --oui-radius-xl: 26px;
-    --oui-radius-l: 20px;
-    --oui-radius-m: 16px;
+    /* Shape */
+    --oui-radius-xl: 26px; /* Signature OneUI */
+    --oui-radius-l: 18px;
+    --oui-radius-m: 12px;
+    --oui-radius-pill: 999px;
     --oui-pad: 24px;
     
-    /* Physics */
+    /* Animation */
     --oui-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --oui-ease: cubic-bezier(0.25, 0.8, 0.25, 1);
     
-    /* Z-Index */
     --z-nav: 800;
     --z-overlay: 900;
     --z-modal: 950;
     --z-toast: 1000;
 }
 
-/* Dark Mode */
 [data-theme="dark"] {
-    --oui-bg: #050505; /* Deep Black */
+    --oui-bg: #000000;
     --oui-surface: #1c1c1c;
     --oui-surface-alt: #262626;
     --oui-surface-trans: rgba(28, 28, 28, 0.85);
     --oui-border: #333333;
     --oui-divider: #2a2a2a;
-    
     --oui-text: #ffffff;
     --oui-text-sec: #a0a0a0;
     --oui-text-ter: #666666;
-    
-    --oui-primary-dim: rgba(0, 122, 254, 0.3);
 }
 
-/* --- 3. RESET & BASE --- */
+/* --- 2. GLOBAL RESET & SCROLLBAR --- */
 *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-html.lenis, html.lenis body { height: auto; } 
-.lenis.lenis-smooth { scroll-behavior: auto !important; } 
-.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; } 
-.lenis.lenis-stopped { overflow: hidden; } 
+
+/* Custom Scrollbar - Visible on all browsers */
+html {
+    scrollbar-gutter: stable;
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar { width: 12px; height: 12px; display: block !important; }
+::-webkit-scrollbar-track { background: var(--oui-bg); }
+::-webkit-scrollbar-thumb { 
+    background-color: #c1c1c1; 
+    border-radius: 20px; 
+    border: 3px solid var(--oui-bg); 
+}
+::-webkit-scrollbar-thumb:hover { background-color: #a8a8a8; }
+
+/* Firefox */
+* { scrollbar-width: auto; scrollbar-color: #c1c1c1 var(--oui-bg); }
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background-color: #444; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background-color: #555; }
+[data-theme="dark"] { scrollbar-color: #444 #000; }
 
 body {
     font-family: 'Outfit', sans-serif;
@@ -77,173 +90,157 @@ body {
     color: var(--oui-text);
     margin: 0;
     padding-bottom: 100px;
-    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
     line-height: 1.6;
-    overflow-x: hidden;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #bbb; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #444; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #555; }
+/* --- 3. TYPOGRAPHY --- */
+.oui-display { font-size: 3.2rem; font-weight: 800; letter-spacing: -1.5px; margin: 0; }
+.oui-h1 { font-size: 2.2rem; font-weight: 700; margin: 0 0 10px 0; }
+.oui-h2 { font-size: 1.5rem; font-weight: 600; margin: 30px 0 10px 0; }
+.oui-sub { font-size: 0.85rem; color: var(--oui-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+.oui-body { font-size: 1.05rem; color: var(--oui-text-sec); }
 
-/* --- 4. TYPOGRAPHY --- */
-.oui-display { font-size: 3rem; font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin: 0; }
-.oui-h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; margin: 0 0 10px 0; }
-.oui-h2 { font-size: 1.5rem; font-weight: 600; margin: 30px 0 15px 0; }
-.oui-h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 5px 0; }
-.oui-sub { font-size: 0.85rem; color: var(--oui-text-sec); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
-.oui-body { font-size: 1rem; color: var(--oui-text-sec); margin-bottom: 10px; }
-.oui-code-inline { font-family: 'JetBrains Mono', monospace; background: var(--oui-surface-alt); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; color: var(--oui-primary); border: 1px solid var(--oui-border); }
+code, pre { font-family: 'Fira Code', monospace !important; }
 
-/* --- 5. LAYOUT --- */
-.oui-viewing-area {
-    padding: 80px var(--oui-pad) 40px;
-    max-width: 1000px; margin: 0 auto;
-}
-.oui-container { padding: 0 var(--oui-pad); max-width: 1000px; margin: 0 auto; }
-
-/* Grid System */
-.oui-row { display: flex; flex-wrap: wrap; margin: 0 -10px; }
-.oui-col { flex: 1; padding: 0 10px; min-width: 280px; } /* Responsive min-width */
-.oui-col-12 { width: 100%; padding: 0 10px; }
-.oui-col-6 { width: 50%; padding: 0 10px; }
-
-/* Desktop Tweaks */
-@media (max-width: 768px) {
-    .oui-col-6 { width: 100%; }
-    .oui-display { font-size: 2.5rem; }
-}
-
-/* --- 6. COMPONENTS --- */
-
-/* Cards */
-.oui-card {
-    background: var(--oui-surface);
-    border-radius: var(--oui-radius-xl);
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.02);
-    border: 1px solid transparent;
-    transition: transform 0.2s, border-color 0.2s;
-}
-[data-theme="dark"] .oui-card { border: 1px solid var(--oui-border); }
-.oui-card.interactive:active { transform: scale(0.98); }
-
-/* Buttons */
+/* --- 4. BUTTONS (EXTENDED) --- */
 .oui-btn {
-    position: relative; width: 100%; padding: 14px 24px;
+    position: relative; width: 100%; padding: 15px 25px;
     border: none; border-radius: var(--oui-radius-pill);
-    font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600;
-    cursor: pointer; overflow: hidden; display: flex; justify-content: center; align-items: center; gap: 8px;
-    transition: transform 0.1s; margin-bottom: 10px;
+    font-family: inherit; font-size: 1rem; font-weight: 600;
+    cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
+    transition: all 0.2s var(--oui-ease); margin-bottom: 12px;
 }
-.oui-btn:active { transform: scale(0.97); }
+.oui-btn:active { transform: scale(0.96); opacity: 0.8; }
+
 .oui-btn-primary { background: var(--oui-primary); color: white; }
 .oui-btn-secondary { background: var(--oui-primary-dim); color: var(--oui-primary); }
-.oui-btn-outline { background: transparent; border: 2px solid var(--oui-border); color: var(--oui-text); }
-.oui-btn-ghost { background: transparent; color: var(--oui-text-sec); }
 
-/* Inputs */
+/* Requested: Rectangle Rounded variants */
+.oui-btn-rect { border-radius: var(--oui-radius-m); }
+
+/* Requested: Black & White variants */
+.oui-btn-black { background: #000; color: #fff; }
+.oui-btn-white { background: #fff; color: #000; border: 1px solid var(--oui-border); }
+[data-theme="dark"] .oui-btn-white { background: #fff; color: #000; }
+[data-theme="dark"] .oui-btn-black { background: #333; color: #fff; }
+
+.oui-btn-outline { background: transparent; border: 2px solid var(--oui-border); color: var(--oui-text); }
+.oui-btn-danger { background: var(--oui-danger); color: white; }
+
+/* --- 5. FORMS (RE-FIXED) --- */
 .oui-input-group {
-    position: relative; margin-bottom: 16px;
-    background: var(--oui-surface-alt); border-radius: var(--oui-radius-m);
-    border: 1px solid transparent; transition: 0.2s;
+    position: relative; margin-bottom: 20px;
+    background: var(--oui-surface-alt); border-radius: var(--oui-radius-l);
+    border: 1px solid transparent; transition: 0.3s var(--oui-ease);
 }
-.oui-input-group:focus-within { border-color: var(--oui-primary); background: var(--oui-surface); }
+.oui-input-group:focus-within { 
+    background: var(--oui-surface); 
+    border-color: var(--oui-primary);
+    box-shadow: 0 0 0 4px var(--oui-primary-dim);
+}
+
 .oui-input {
     width: 100%; background: transparent; border: none;
-    font-size: 1rem; color: var(--oui-text); padding: 26px 16px 10px;
+    font-size: 1.1rem; color: var(--oui-text); padding: 30px 18px 10px;
     font-family: inherit;
 }
+
 .oui-label-float {
-    position: absolute; top: 18px; left: 16px; font-size: 1rem; color: var(--oui-text-sec);
-    pointer-events: none; transition: 0.2s var(--oui-ease);
-}
-.oui-input:focus ~ .oui-label-float,
-.oui-input:not(:placeholder-shown) ~ .oui-label-float {
-    transform: translateY(-10px) scale(0.85); color: var(--oui-primary); transform-origin: left;
+    position: absolute; top: 20px; left: 18px; font-size: 1.1rem;
+    color: var(--oui-text-ter); pointer-events: none; transition: 0.2s var(--oui-ease);
 }
 
-/* Lists */
+.oui-input:focus ~ .oui-label-float,
+.oui-input:not(:placeholder-shown) ~ .oui-label-float {
+    transform: translateY(-12px) scale(0.8);
+    color: var(--oui-primary);
+    font-weight: 600;
+}
+
+/* Requested: Custom Radio & Checkbox */
+.oui-radio, .oui-check {
+    display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 0;
+    font-weight: 500;
+}
+.oui-radio input, .oui-check input { appearance: none; -webkit-appearance: none; margin: 0; }
+
+.oui-radio-mark, .oui-check-mark {
+    width: 24px; height: 24px; border: 2px solid var(--oui-border);
+    transition: 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.oui-radio-mark { border-radius: 50%; }
+.oui-check-mark { border-radius: 6px; }
+
+input:checked + .oui-radio-mark { border-color: var(--oui-primary); background: var(--oui-primary); }
+input:checked + .oui-radio-mark::after {
+    content: ''; width: 10px; height: 10px; background: white; border-radius: 50%;
+}
+input:checked + .oui-check-mark { border-color: var(--oui-primary); background: var(--oui-primary); }
+input:checked + .oui-check-mark::after {
+    content: '✓'; color: white; font-size: 14px; font-weight: bold;
+}
+
+/* --- 6. LISTS (RE-FIXED) --- */
 .oui-list { background: var(--oui-surface); border-radius: var(--oui-radius-xl); overflow: hidden; border: 1px solid var(--oui-border); }
 .oui-item {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 20px; border-bottom: 1px solid var(--oui-divider);
+    padding: 20px 24px; border-bottom: 1px solid var(--oui-divider);
     cursor: pointer; transition: background 0.2s;
 }
 .oui-item:last-child { border-bottom: none; }
 .oui-item:active { background: var(--oui-surface-alt); }
-.oui-item-icon { font-size: 1.4rem; margin-right: 16px; color: var(--oui-text-sec); }
 
-/* Navigation */
+.oui-item-content { display: flex; align-items: center; gap: 16px; }
+.oui-item-icon { font-size: 1.6rem; color: var(--oui-primary); }
+.oui-item-title { font-weight: 600; font-size: 1.05rem; }
+.oui-item-sub { font-size: 0.85rem; color: var(--oui-text-ter); display: block; }
+
+/* --- 7. OVERLAYS & NAV --- */
 .oui-bottom-nav {
     position: fixed; bottom: 0; left: 0; width: 100%;
-    background: var(--oui-surface-trans);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid var(--oui-border);
-    display: flex; justify-content: space-around;
-    padding: 10px 0 30px; z-index: var(--z-nav);
+    background: var(--oui-surface-trans); backdrop-filter: blur(25px);
+    border-top: 1px solid var(--oui-border); display: flex; justify-content: space-around;
+    padding: 12px 0 35px; z-index: var(--z-nav);
 }
 .oui-nav-item {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    color: var(--oui-text-sec); text-decoration: none;
-    font-size: 0.75rem; font-weight: 500; padding: 8px 20px;
-    border-radius: 16px; transition: 0.2s;
+    color: var(--oui-text-sec); text-decoration: none; font-size: 0.75rem; font-weight: 600;
 }
-.oui-nav-item i { font-size: 1.5rem; margin-bottom: 2px; }
-.oui-nav-item.active { color: var(--oui-text); background: rgba(0,0,0,0.03); }
-[data-theme="dark"] .oui-nav-item.active { background: rgba(255,255,255,0.1); }
-.oui-nav-item.active i { color: var(--oui-primary); font-weight: bold; }
+.oui-nav-item.active { color: var(--oui-primary); }
 
-/* Overlays */
 .oui-overlay-backdrop {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); z-index: var(--z-overlay);
-    opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(4px);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: var(--z-overlay);
+    opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(5px);
 }
 .oui-overlay-backdrop.active { opacity: 1; visibility: visible; }
 
 .oui-sheet {
     position: fixed; bottom: -100%; left: 0; width: 100%;
-    background: var(--oui-surface);
-    border-radius: var(--oui-radius-xl) var(--oui-radius-xl) 0 0;
-    padding: 10px var(--oui-pad) 40px; z-index: var(--z-modal);
-    transition: bottom 0.4s var(--oui-spring);
+    background: var(--oui-surface); border-radius: 30px 30px 0 0;
+    padding: 10px 24px 45px; z-index: var(--z-modal); transition: bottom 0.5s var(--oui-spring);
 }
 .oui-sheet.active { bottom: 0; }
-.oui-sheet-handle { width: 40px; height: 5px; background: var(--oui-border); border-radius: 10px; margin: 10px auto 20px; }
+.oui-sheet-handle { width: 45px; height: 6px; background: var(--oui-border); border-radius: 10px; margin: 10px auto 25px; }
 
-/* Version Badge (Fixed) */
+/* --- 8. UTILITIES --- */
+.oui-container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+.oui-viewing-area { padding: 80px 24px 40px; }
+.oui-animate-list > * { opacity: 0; animation: slideUp 0.6s var(--oui-ease) forwards; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Badge */
 .oui-badge-version {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 12px;
-    background: var(--oui-surface-alt);
-    border: 1px solid var(--oui-border);
-    border-radius: 50px;
-    font-size: 0.85rem; font-weight: 600; color: var(--oui-text);
-    font-family: 'JetBrains Mono', monospace;
+    padding: 6px 12px; background: var(--oui-surface-alt);
+    border: 1px solid var(--oui-border); border-radius: 8px;
+    font-family: 'Fira Code', monospace; font-size: 0.85rem; font-weight: 600;
 }
-.oui-badge-dot { width: 8px; height: 8px; background: var(--oui-success); border-radius: 50%; box-shadow: 0 0 0 2px var(--oui-surface); }
+.oui-badge-dot { width: 8px; height: 8px; background: var(--oui-success); border-radius: 50%; }
 
-/* Toast */
-#oui-toast {
-    visibility: hidden; min-width: 200px;
-    background-color: #222; color: #fff; text-align: center;
-    border-radius: 50px; padding: 14px 24px;
-    position: fixed; z-index: var(--z-toast);
-    left: 50%; bottom: 100px; transform: translateX(-50%) scale(0.9);
-    opacity: 0; transition: all 0.3s var(--oui-spring);
+/* Skeleton */
+.oui-skeleton {
+    background: linear-gradient(90deg, var(--oui-surface-alt) 25%, var(--oui-border) 50%, var(--oui-surface-alt) 75%);
+    background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 8px;
 }
-#oui-toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) scale(1); bottom: 110px; }
-
-/* Ripple */
-.ripple {
-    position: absolute; border-radius: 50%; background: currentColor; opacity: 0.1;
-    transform: scale(0); animation: ripple 0.6s linear; pointer-events: none;
-}
-@keyframes ripple { to { transform: scale(4); opacity: 0; } }
+@keyframes shimmer { to { background-position: -200% 0; } }

@@ -1,64 +1,64 @@
 /**
- * OneUI Web Library v8.0 - Apex Core
- * Fixed Module Resolution Error
+ * Modernize UI JS Engine
+ * Handles Smooth Scrolling, Icons, and Ripples.
  */
 
-// Global Initialization function
-window.initOneUI = function() {
-    console.log("OneUI v8.0 Apex Initialized 🚀");
-    
-    // 1. Load Phosphor Icons
-    if (!document.querySelector('script[src*="phosphor-icons"]')) {
-        const s = document.createElement('script');
-        s.src = "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/index.min.js";
-        document.head.appendChild(s);
-    }
+(function() {
+    console.log("Modernize UI Initialized ✨");
 
-    // 2. Initialize Lenis (Directly from window)
-    const script = document.createElement('script');
-    script.src = "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js";
-    script.onload = () => {
-        const lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+    // 1. Injected Styles for Ripples
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .m-ripple {
+            position: absolute; border-radius: 50%;
+            background: rgba(128, 128, 128, 0.3);
+            transform: scale(0); animation: m-ripple-anim 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes m-ripple-anim { to { transform: scale(4); opacity: 0; } }
+        [data-theme="dark"] .m-ripple { background: rgba(255, 255, 255, 0.2); }
+    `;
+    document.head.appendChild(style);
+
+    // 2. Load Smooth Scroll (Lenis)
+    const lenisScript = document.createElement('script');
+    lenisScript.src = "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js";
+    lenisScript.onload = () => {
+        const lenis = new Lenis();
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
     };
-    document.head.appendChild(script);
+    document.head.appendChild(lenisScript);
 
-    // 3. Ripple & Interaction Engine
+    // 3. Load Icons (Phosphor)
+    const iconScript = document.createElement('script');
+    iconScript.src = "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/index.min.js";
+    document.head.appendChild(iconScript);
+
+    // 4. Global Click Interactions
     document.addEventListener('mousedown', (e) => {
-        const btn = e.target.closest('.oui-btn, .oui-item');
-        if (btn) {
-            const circle = document.createElement('span');
-            circle.style.cssText = `position:absolute; background:rgba(0,0,0,0.1); border-radius:50%; pointer-events:none; transform:scale(0); animation: ripple 0.6s linear;`;
-            // Ripple CSS
-            if (!document.getElementById('ripple-style')) {
-                const style = document.createElement('style');
-                style.id = 'ripple-style';
-                style.innerHTML = `@keyframes ripple { to { transform: scale(4); opacity: 0; } }`;
-                document.head.appendChild(style);
-            }
-            const rect = btn.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            circle.style.width = circle.style.height = `${size}px`;
-            circle.style.left = `${e.clientX - rect.left - size/2}px`;
-            circle.style.top = `${e.clientY - rect.top - size/2}px`;
-            btn.appendChild(circle);
-            setTimeout(() => circle.remove(), 600);
-        }
+        const target = e.target.closest('button, .card, a');
+        if (!target) return;
+
+        // Create Ripple
+        const rect = target.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        const size = Math.max(rect.width, rect.height);
+        ripple.className = 'm-ripple';
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+        ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+        
+        target.style.position = 'relative';
+        target.style.overflow = 'hidden';
+        target.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
     });
 
-    // Dark Mode Auto
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-    }
-};
-
-window.toggleTheme = () => {
-    const root = document.documentElement;
-    root.setAttribute('data-theme', root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-};
-
-window.toggleOverlay = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('active');
-};
+    // 5. Expose Theme Switcher
+    window.toggleTheme = () => {
+        const root = document.documentElement;
+        const current = root.getAttribute('data-theme');
+        root.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    };
+})();

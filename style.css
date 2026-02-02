@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ONEUI WEB LIBRARY - DEFINITIVE EDITION (v5.0 + Ultra)
+   ONEUI WEB LIBRARY v6.0 ("SILK" EDITION)
    ========================================================================== */
 
 /* --- 1. CORE IMPORTS & FONTS --- */
@@ -38,7 +38,7 @@
     --oui-radius-l: 20px;
     --oui-radius-m: 16px;
     --oui-radius-s: 12px;
-    --oui-radius-pill: 50px;
+    --oui-radius-pill: 999px;
     --oui-pad: 24px;
     
     /* Physics & Animation */
@@ -84,6 +84,12 @@
 /* Allow text selection on inputs/paragraphs */
 p, h1, h2, h3, h4, h5, h6, input, textarea, pre, code { user-select: text; }
 
+html.lenis, html.lenis body { height: auto; } 
+.lenis.lenis-smooth { scroll-behavior: auto !important; } 
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; } 
+.lenis.lenis-stopped { overflow: hidden; } 
+.lenis.lenis-scrolling iframe { pointer-events: none; }
+
 body {
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: var(--oui-bg);
@@ -96,8 +102,26 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Scrollbar Hiding */
-::-webkit-scrollbar { width: 0px; background: transparent; }
+/* --- 3.1 CUSTOM SCROLLBAR (Cross Browser) --- */
+/* Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { 
+    background: #c1c1c1; 
+    border-radius: 10px; 
+    border: 3px solid transparent; 
+    background-clip: content-box; 
+}
+::-webkit-scrollbar-thumb:hover { background-color: #a8a8a8; }
+
+/* Firefox */
+* { scrollbar-width: thin; scrollbar-color: #c1c1c1 transparent; }
+
+/* Dark Mode Scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background-color: #444; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background-color: #666; }
+[data-theme="dark"] { scrollbar-color: #444 transparent; }
+
 
 /* --- 4. TYPOGRAPHY SYSTEM --- */
 .oui-display { font-size: 3rem; font-weight: 700; letter-spacing: -1px; line-height: 1.1; }
@@ -137,14 +161,14 @@ body {
 
 .oui-container { padding: 0 var(--oui-pad); max-width: 800px; margin: 0 auto; }
 
-/* --- 5.1 GRID SYSTEM (NEW) --- */
+/* --- 5.1 GRID SYSTEM --- */
 .oui-row { display: flex; flex-wrap: wrap; margin: 0 -8px; }
 .oui-col { flex: 1; padding: 0 8px; }
 .oui-col-12 { width: 100%; padding: 0 8px; }
 .oui-col-6 { width: 50%; padding: 0 8px; }
 .oui-col-4 { width: 33.33%; padding: 0 8px; }
 
-/* --- 5.2 SCROLL SNAP (NEW) --- */
+/* --- 5.2 SCROLL SNAP --- */
 .oui-scroll-x {
     display: flex;
     gap: 12px;
@@ -152,8 +176,9 @@ body {
     padding-bottom: 16px;
     scroll-snap-type: x mandatory;
     -ms-overflow-style: none;
-    scrollbar-width: none;
+    scrollbar-width: none; /* Hide scrollbar for clean look in components */
 }
+.oui-scroll-x::-webkit-scrollbar { display: none; }
 .oui-scroll-x > * { scroll-snap-align: start; flex-shrink: 0; }
 
 /* --- 6. ANIMATIONS --- */
@@ -170,7 +195,6 @@ body {
     100% { background-position: -200% 0; }
 }
 
-/* Staggered List Animation Helper */
 .oui-animate-list > * {
     opacity: 0;
     animation: slideUpFade 0.5s var(--oui-ease) forwards;
@@ -225,7 +249,7 @@ body {
     background: transparent; 
     border: 2px solid var(--oui-primary); 
     color: var(--oui-primary); 
-    padding: 14px 24px; /* Adjust for border */
+    padding: 14px 24px; 
 }
 
 .oui-btn-ghost { background: transparent; color: var(--oui-text-sec); }
@@ -233,7 +257,7 @@ body {
 
 .oui-btn-danger { background: rgba(255, 59, 48, 0.1); color: var(--oui-danger); }
 
-/* --- 9. FORMS & INPUTS (Floating Labels) --- */
+/* --- 9. FORMS & INPUTS --- */
 .oui-input-group {
     position: relative;
     margin-bottom: 16px;
@@ -254,7 +278,7 @@ body {
     font-family: 'Outfit', sans-serif;
     font-size: 1rem;
     color: var(--oui-text);
-    padding: 26px 16px 10px; /* Space for label */
+    padding: 26px 16px 10px;
     border-radius: var(--oui-radius-m);
     appearance: none;
 }
@@ -271,7 +295,6 @@ body {
     transform-origin: left top;
 }
 
-/* Float Logic */
 .oui-input:focus ~ .oui-label-float,
 .oui-input:not(:placeholder-shown) ~ .oui-label-float,
 .oui-textarea:focus ~ .oui-label-float,
@@ -330,7 +353,6 @@ body {
 .oui-item-end { color: var(--oui-text-ter); display: flex; align-items: center; gap: 10px; }
 
 /* --- 11. TOGGLES, RADIOS, CHECKS --- */
-/* Switch */
 .oui-switch { position: relative; display: inline-block; width: 50px; height: 30px; flex-shrink: 0; }
 .oui-switch input { opacity: 0; width: 0; height: 0; }
 .oui-switch-track {
@@ -345,7 +367,6 @@ body {
 input:checked + .oui-switch-track { background-color: var(--oui-primary); }
 input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px); }
 
-/* Radio */
 .oui-radio { display: flex; align-items: center; gap: 12px; padding: 12px 0; cursor: pointer; }
 .oui-radio input { display: none; }
 .oui-radio-circle {
@@ -356,7 +377,6 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
 .oui-radio input:checked + .oui-radio-circle { border-color: var(--oui-primary); border-width: 6px; }
 
 /* --- 12. NAVIGATION COMPONENTS --- */
-/* Bottom Nav */
 .oui-bottom-nav {
     position: fixed; bottom: 0; left: 0; width: 100%;
     background: var(--oui-surface-trans);
@@ -376,7 +396,6 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
 .oui-nav-item.active { color: var(--oui-text); }
 .oui-nav-item.active i { color: var(--oui-primary); transform: translateY(-2px); font-weight: bold; }
 
-/* Segmented Control (Tabs) */
 .oui-segments {
     display: flex; background: var(--oui-surface-alt);
     padding: 4px; border-radius: var(--oui-radius-pill);
@@ -389,7 +408,6 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
     transition: 0.3s; z-index: 2;
 }
 .oui-segment-btn.active { color: var(--oui-text); }
-/* The sliding background for tabs */
 .oui-segment-glider {
     position: absolute; top: 4px; bottom: 4px; left: 4px;
     width: calc(33.33% - 8px); /* Assuming 3 tabs */
@@ -399,7 +417,7 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
     transition: 0.3s var(--oui-spring); z-index: 1;
 }
 
-/* --- 13. OVERLAYS (Dialogs & Sheets) --- */
+/* --- 13. OVERLAYS --- */
 .oui-overlay-backdrop {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.4); z-index: var(--z-overlay);
@@ -408,7 +426,6 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
 }
 .oui-overlay-backdrop.active { opacity: 1; visibility: visible; }
 
-/* Bottom Sheet */
 .oui-sheet {
     position: fixed; bottom: -100%; left: 0; width: 100%;
     background: var(--oui-surface);
@@ -424,7 +441,6 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
     border-radius: 10px; margin: 10px auto 30px;
 }
 
-/* Dialog */
 .oui-dialog {
     position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -40%) scale(0.9);
@@ -440,7 +456,6 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
 .oui-dialog.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
 
 /* --- 14. FEEDBACK & UTILS --- */
-/* Toast */
 #oui-toast {
     visibility: hidden; min-width: 200px;
     background-color: rgba(40, 40, 40, 0.95);
@@ -455,17 +470,47 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
 }
 #oui-toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) scale(1); bottom: 110px; }
 
-/* Chips */
+/* Redesigned Chips & Badges (Professional Look) */
 .oui-chip-group { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
 .oui-chip {
-    padding: 8px 16px; background: var(--oui-surface-alt);
-    border-radius: 20px; font-size: 0.9rem; font-weight: 500;
-    color: var(--oui-text-sec); white-space: nowrap; transition: 0.2s;
-    border: 1px solid transparent;
+    padding: 6px 14px; 
+    background: var(--oui-surface-alt);
+    border-radius: 8px; 
+    font-size: 0.85rem; 
+    font-weight: 600;
+    color: var(--oui-text-sec); 
+    white-space: nowrap; 
+    transition: 0.2s;
+    border: 1px solid var(--oui-border);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
-.oui-chip.active { background: var(--oui-primary-dim); color: var(--oui-primary); border-color: var(--oui-primary); }
+.oui-chip.active { 
+    background: var(--oui-surface); 
+    color: var(--oui-text); 
+    border-color: var(--oui-text);
+}
 
-/* Alert */
+/* The New Version Badge */
+.oui-badge-version {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(0,0,0,0.04);
+    border: 1px solid var(--oui-border);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--oui-text-sec);
+    font-family: monospace;
+}
+[data-theme="dark"] .oui-badge-version { background: rgba(255,255,255,0.08); }
+.oui-badge-dot {
+    width: 6px; height: 6px; background: var(--oui-success); border-radius: 50%;
+}
+
 .oui-alert {
     padding: 16px; border-radius: var(--oui-radius-m);
     background: rgba(255, 204, 0, 0.15); color: #d48806;
@@ -473,7 +518,6 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
 }
 .oui-alert i { font-size: 1.2rem; margin-top: 2px; }
 
-/* Ripple Effect */
 .ripple {
     position: absolute; border-radius: 50%;
     background: rgba(0, 0, 0, 0.1);
@@ -482,13 +526,12 @@ input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px
 [data-theme="dark"] .ripple { background: rgba(255, 255, 255, 0.1); }
 @keyframes ripple { to { transform: scale(4); opacity: 0; } }
 
-/* Skeleton */
 .oui-skeleton {
     background: linear-gradient(90deg, var(--oui-surface-alt) 25%, var(--oui-border) 50%, var(--oui-surface-alt) 75%);
     background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px;
 }
 
-/* --- 15. UTILITIES (NEW) --- */
+/* --- 15. UTILITIES --- */
 .oui-mt-1 { margin-top: 4px; }
 .oui-mt-2 { margin-top: 8px; }
 .oui-mt-4 { margin-top: 16px; }

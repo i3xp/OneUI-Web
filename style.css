@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ONEUI WEB LIBRARY v7.0 - OFFICIAL DESIGN SYSTEM
+   ONEUI WEB LIBRARY v8.0 - APEX STABLE
    ========================================================================== */
 
 /* --- 1. FONTS --- */
@@ -7,240 +7,120 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
 
 :root {
-    /* Brand Colors */
     --oui-primary: #007afe;
-    --oui-primary-dark: #0062cc;
     --oui-primary-dim: rgba(0, 122, 254, 0.12);
-    
-    /* Functional Colors */
     --oui-success: #34c759;
-    --oui-warning: #ffcc00;
     --oui-danger: #ff3b30;
-    
-    /* Neutrals - Light */
     --oui-bg: #f2f2f2;
     --oui-surface: #ffffff;
     --oui-surface-alt: #f7f7f7;
-    --oui-surface-trans: rgba(255, 255, 255, 0.85);
     --oui-border: #e0e0e0;
     --oui-divider: #f0f0f0;
-    
-    /* Text - Light */
     --oui-text: #000000;
     --oui-text-sec: #666666;
-    --oui-text-ter: #999999;
-
-    /* Shape */
-    --oui-radius-xl: 26px; /* Signature OneUI */
-    --oui-radius-l: 18px;
+    --oui-radius-xl: 26px;
     --oui-radius-m: 12px;
-    --oui-radius-pill: 999px;
-    --oui-pad: 24px;
-    
-    /* Animation */
-    --oui-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --oui-ease: cubic-bezier(0.25, 0.8, 0.25, 1);
-    
-    --z-nav: 800;
-    --z-overlay: 900;
-    --z-modal: 950;
-    --z-toast: 1000;
 }
 
 [data-theme="dark"] {
     --oui-bg: #000000;
     --oui-surface: #1c1c1c;
     --oui-surface-alt: #262626;
-    --oui-surface-trans: rgba(28, 28, 28, 0.85);
     --oui-border: #333333;
     --oui-divider: #2a2a2a;
     --oui-text: #ffffff;
     --oui-text-sec: #a0a0a0;
-    --oui-text-ter: #666666;
 }
 
-/* --- 2. GLOBAL RESET & SCROLLBAR --- */
-*, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-
-/* Custom Scrollbar - Visible on all browsers */
-html {
-    scrollbar-gutter: stable;
-}
-
-/* Chrome, Edge, Safari */
-::-webkit-scrollbar { width: 12px; height: 12px; display: block !important; }
+/* --- 2. THE ULTIMATE SCROLLBAR (Cross-Browser) --- */
+html { scrollbar-gutter: stable; }
+::-webkit-scrollbar { width: 12px; display: block !important; }
 ::-webkit-scrollbar-track { background: var(--oui-bg); }
 ::-webkit-scrollbar-thumb { 
-    background-color: #c1c1c1; 
+    background-color: #bbbbbb; 
     border-radius: 20px; 
     border: 3px solid var(--oui-bg); 
 }
-::-webkit-scrollbar-thumb:hover { background-color: #a8a8a8; }
+::-webkit-scrollbar-thumb:hover { background-color: #999; }
+* { scrollbar-width: thin; scrollbar-color: #bbbbbb var(--oui-bg); }
 
-/* Firefox */
-* { scrollbar-width: auto; scrollbar-color: #c1c1c1 var(--oui-bg); }
+/* --- 3. LENIS SMOOTH SCROLL CSS --- */
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
 
-[data-theme="dark"] ::-webkit-scrollbar-thumb { background-color: #444; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background-color: #555; }
-[data-theme="dark"] { scrollbar-color: #444 #000; }
-
+/* --- 4. BASE STYLES --- */
 body {
     font-family: 'Outfit', sans-serif;
     background-color: var(--oui-bg);
     color: var(--oui-text);
     margin: 0;
-    padding-bottom: 100px;
-    transition: background-color 0.3s, color 0.3s;
     line-height: 1.6;
+    transition: background-color 0.3s;
 }
 
-/* --- 3. TYPOGRAPHY --- */
-.oui-display { font-size: 3.2rem; font-weight: 800; letter-spacing: -1.5px; margin: 0; }
-.oui-h1 { font-size: 2.2rem; font-weight: 700; margin: 0 0 10px 0; }
-.oui-h2 { font-size: 1.5rem; font-weight: 600; margin: 30px 0 10px 0; }
-.oui-sub { font-size: 0.85rem; color: var(--oui-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
-.oui-body { font-size: 1.05rem; color: var(--oui-text-sec); }
+/* --- 5. COMPONENTS --- */
+.oui-card {
+    background: var(--oui-surface);
+    border-radius: var(--oui-radius-xl);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    border: 1px solid transparent;
+}
+[data-theme="dark"] .oui-card { border-color: var(--oui-border); }
 
-code, pre { font-family: 'Fira Code', monospace !important; }
-
-/* --- 4. BUTTONS (EXTENDED) --- */
+/* Buttons */
 .oui-btn {
-    position: relative; width: 100%; padding: 15px 25px;
-    border: none; border-radius: var(--oui-radius-pill);
-    font-family: inherit; font-size: 1rem; font-weight: 600;
-    cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
-    transition: all 0.2s var(--oui-ease); margin-bottom: 12px;
+    padding: 14px 24px; border: none; border-radius: 999px;
+    font-family: inherit; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-.oui-btn:active { transform: scale(0.96); opacity: 0.8; }
-
+.oui-btn:active { transform: scale(0.96); }
 .oui-btn-primary { background: var(--oui-primary); color: white; }
-.oui-btn-secondary { background: var(--oui-primary-dim); color: var(--oui-primary); }
-
-/* Requested: Rectangle Rounded variants */
-.oui-btn-rect { border-radius: var(--oui-radius-m); }
-
-/* Requested: Black & White variants */
 .oui-btn-black { background: #000; color: #fff; }
 .oui-btn-white { background: #fff; color: #000; border: 1px solid var(--oui-border); }
-[data-theme="dark"] .oui-btn-white { background: #fff; color: #000; }
-[data-theme="dark"] .oui-btn-black { background: #333; color: #fff; }
+[data-theme="dark"] .oui-btn-black { background: #333; }
 
-.oui-btn-outline { background: transparent; border: 2px solid var(--oui-border); color: var(--oui-text); }
-.oui-btn-danger { background: var(--oui-danger); color: white; }
-
-/* --- 5. FORMS (RE-FIXED) --- */
+/* Forms (Fixed UI) */
 .oui-input-group {
-    position: relative; margin-bottom: 20px;
-    background: var(--oui-surface-alt); border-radius: var(--oui-radius-l);
-    border: 1px solid transparent; transition: 0.3s var(--oui-ease);
+    position: relative; margin-bottom: 15px;
+    background: var(--oui-surface-alt); border-radius: 16px;
+    border: 1px solid transparent; transition: 0.3s;
 }
-.oui-input-group:focus-within { 
-    background: var(--oui-surface); 
-    border-color: var(--oui-primary);
-    box-shadow: 0 0 0 4px var(--oui-primary-dim);
-}
-
+.oui-input-group:focus-within { background: var(--oui-surface); border-color: var(--oui-primary); }
 .oui-input {
     width: 100%; background: transparent; border: none;
-    font-size: 1.1rem; color: var(--oui-text); padding: 30px 18px 10px;
-    font-family: inherit;
+    font-size: 1.1rem; color: var(--oui-text); padding: 28px 18px 10px;
 }
-
 .oui-label-float {
-    position: absolute; top: 20px; left: 18px; font-size: 1.1rem;
-    color: var(--oui-text-ter); pointer-events: none; transition: 0.2s var(--oui-ease);
+    position: absolute; top: 18px; left: 18px; font-size: 1.1rem;
+    color: var(--oui-text-sec); pointer-events: none; transition: 0.2s;
+}
+.oui-input:focus ~ .oui-label-float, .oui-input:not(:placeholder-shown) ~ .oui-label-float {
+    transform: translateY(-10px) scale(0.8); color: var(--oui-primary);
 }
 
-.oui-input:focus ~ .oui-label-float,
-.oui-input:not(:placeholder-shown) ~ .oui-label-float {
-    transform: translateY(-12px) scale(0.8);
-    color: var(--oui-primary);
-    font-weight: 600;
-}
-
-/* Requested: Custom Radio & Checkbox */
-.oui-radio, .oui-check {
-    display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 0;
-    font-weight: 500;
-}
-.oui-radio input, .oui-check input { appearance: none; -webkit-appearance: none; margin: 0; }
-
-.oui-radio-mark, .oui-check-mark {
+/* Custom Check & Radio */
+.oui-check, .oui-radio { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.oui-check input, .oui-radio input { display: none; }
+.oui-check-box, .oui-radio-box {
     width: 24px; height: 24px; border: 2px solid var(--oui-border);
-    transition: 0.2s; display: flex; align-items: center; justify-content: center;
+    background: var(--oui-surface-alt); display: flex; align-items: center; justify-content: center;
 }
-.oui-radio-mark { border-radius: 50%; }
-.oui-check-mark { border-radius: 6px; }
+.oui-radio-box { border-radius: 50%; }
+.oui-check-box { border-radius: 6px; }
+input:checked + .oui-check-box, input:checked + .oui-radio-box { 
+    background: var(--oui-primary); border-color: var(--oui-primary); 
+}
+input:checked + .oui-check-box::after { content: '✓'; color: white; font-weight: bold; }
+input:checked + .oui-radio-box::after { content: ''; width: 10px; height: 10px; background: white; border-radius: 50%; }
 
-input:checked + .oui-radio-mark { border-color: var(--oui-primary); background: var(--oui-primary); }
-input:checked + .oui-radio-mark::after {
-    content: ''; width: 10px; height: 10px; background: white; border-radius: 50%;
-}
-input:checked + .oui-check-mark { border-color: var(--oui-primary); background: var(--oui-primary); }
-input:checked + .oui-check-mark::after {
-    content: '✓'; color: white; font-size: 14px; font-weight: bold;
-}
+/* Typography Helpers */
+.oui-h1 { font-size: 2.5rem; font-weight: 700; margin: 0; }
+.oui-code { font-family: 'Fira Code', monospace; background: #1e1e1e; color: #50fa7b; padding: 20px; border-radius: 12px; overflow-x: auto; }
 
-/* --- 6. LISTS (RE-FIXED) --- */
-.oui-list { background: var(--oui-surface); border-radius: var(--oui-radius-xl); overflow: hidden; border: 1px solid var(--oui-border); }
-.oui-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 20px 24px; border-bottom: 1px solid var(--oui-divider);
-    cursor: pointer; transition: background 0.2s;
-}
-.oui-item:last-child { border-bottom: none; }
-.oui-item:active { background: var(--oui-surface-alt); }
-
-.oui-item-content { display: flex; align-items: center; gap: 16px; }
-.oui-item-icon { font-size: 1.6rem; color: var(--oui-primary); }
-.oui-item-title { font-weight: 600; font-size: 1.05rem; }
-.oui-item-sub { font-size: 0.85rem; color: var(--oui-text-ter); display: block; }
-
-/* --- 7. OVERLAYS & NAV --- */
-.oui-bottom-nav {
-    position: fixed; bottom: 0; left: 0; width: 100%;
-    background: var(--oui-surface-trans); backdrop-filter: blur(25px);
-    border-top: 1px solid var(--oui-border); display: flex; justify-content: space-around;
-    padding: 12px 0 35px; z-index: var(--z-nav);
-}
-.oui-nav-item {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    color: var(--oui-text-sec); text-decoration: none; font-size: 0.75rem; font-weight: 600;
-}
-.oui-nav-item.active { color: var(--oui-primary); }
-
-.oui-overlay-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: var(--z-overlay);
-    opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(5px);
-}
-.oui-overlay-backdrop.active { opacity: 1; visibility: visible; }
-
-.oui-sheet {
-    position: fixed; bottom: -100%; left: 0; width: 100%;
-    background: var(--oui-surface); border-radius: 30px 30px 0 0;
-    padding: 10px 24px 45px; z-index: var(--z-modal); transition: bottom 0.5s var(--oui-spring);
-}
-.oui-sheet.active { bottom: 0; }
-.oui-sheet-handle { width: 45px; height: 6px; background: var(--oui-border); border-radius: 10px; margin: 10px auto 25px; }
-
-/* --- 8. UTILITIES --- */
-.oui-container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
-.oui-viewing-area { padding: 80px 24px 40px; }
-.oui-animate-list > * { opacity: 0; animation: slideUp 0.6s var(--oui-ease) forwards; }
-@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-/* Badge */
-.oui-badge-version {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 12px; background: var(--oui-surface-alt);
-    border: 1px solid var(--oui-border); border-radius: 8px;
-    font-family: 'Fira Code', monospace; font-size: 0.85rem; font-weight: 600;
-}
-.oui-badge-dot { width: 8px; height: 8px; background: var(--oui-success); border-radius: 50%; }
-
-/* Skeleton */
-.oui-skeleton {
-    background: linear-gradient(90deg, var(--oui-surface-alt) 25%, var(--oui-border) 50%, var(--oui-surface-alt) 75%);
-    background-size: 200% 100%; animation: shimmer 1.5s infinite linear; border-radius: 8px;
-}
-@keyframes shimmer { to { background-position: -200% 0; } }
+/* Desktop Grid */
+.oui-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }

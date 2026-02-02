@@ -1,5 +1,5 @@
 // =========================================
-// ONEUI WEB LIBRARY v3.0 - LOGIC
+// ONEUI WEB LIBRARY v4.0 - LOGIC
 // =========================================
 
 // 1. Auto-Inject Dependencies
@@ -11,73 +11,85 @@ function loadDependencies() {
     }
 }
 
-// 2. Ripple Effect
+// 2. Ripple Engine (Optimized)
 function initRipples() {
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('.oui-btn, .oui-list-item');
-        if (target && !target.disabled) {
-            const circle = document.createElement('span');
-            const diameter = Math.max(target.clientWidth, target.clientHeight);
-            const radius = diameter / 2;
-            const rect = target.getBoundingClientRect();
-            
-            circle.style.width = circle.style.height = `${diameter}px`;
-            circle.style.left = `${e.clientX - rect.left - radius}px`;
-            circle.style.top = `${e.clientY - rect.top - radius}px`;
-            circle.classList.add('ripple');
-            
-            const existing = target.getElementsByClassName('ripple')[0];
-            if (existing) existing.remove();
-            
-            target.appendChild(circle);
-        }
-    });
-}
+    document.addEventListener('mousedown', createRipple);
+    document.addEventListener('touchstart', createRipple, { passive: true });
 
-// 3. Dialog / Modal Logic
-export function toggleDialog(id) {
-    const dialog = document.getElementById(id);
-    const overlay = document.getElementById('oui-overlay');
-    
-    if (dialog.classList.contains('active')) {
-        dialog.classList.remove('active');
-        overlay.classList.remove('active');
-    } else {
-        dialog.classList.add('active');
-        overlay.classList.add('active');
+    function createRipple(e) {
+        const target = e.target.closest('.oui-btn, .oui-item, .oui-chip, .oui-nav-item');
+        if (!target || target.disabled) return;
+
+        const circle = document.createElement('span');
+        const diameter = Math.max(target.clientWidth, target.clientHeight);
+        const radius = diameter / 2;
+        const rect = target.getBoundingClientRect();
+        
+        // Handle touch vs mouse coordinates
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${clientX - rect.left - radius}px`;
+        circle.style.top = `${clientY - rect.top - radius}px`;
+        circle.classList.add('ripple');
+        
+        const existing = target.getElementsByClassName('ripple')[0];
+        if (existing) existing.remove();
+        
+        target.appendChild(circle);
     }
 }
 
-// 4. Bottom Nav Logic
-export function initNav() {
-    const items = document.querySelectorAll('.oui-nav-item');
-    items.forEach(item => {
-        item.addEventListener('click', (e) => {
-            // Optional: Prevent default if you want SPA behavior
-            // e.preventDefault(); 
-            items.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
+// 3. Overlay Manager (Dialogs & Sheets)
+export function toggleOverlay(id) {
+    const el = document.getElementById(id);
+    const backdrop = document.getElementById('oui-backdrop');
+    
+    if (el.classList.contains('active')) {
+        el.classList.remove('active');
+        backdrop.classList.remove('active');
+    } else {
+        // Close others first
+        document.querySelectorAll('.oui-sheet.active, .oui-dialog.active').forEach(e => e.classList.remove('active'));
+        el.classList.add('active');
+        backdrop.classList.add('active');
+    }
+}
+
+// 4. Tab/Segment Logic
+export function initTabs() {
+    const segments = document.querySelectorAll('.oui-segment-btn');
+    segments.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+            const parent = btn.closest('.oui-segments');
+            const glider = parent.querySelector('.oui-segment-glider');
+            
+            parent.querySelectorAll('.oui-segment-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Move Glider
+            glider.style.transform = `translateX(${index * 100}%)`;
         });
     });
 }
 
 // 5. Initialization
 export function initOneUI() {
-    console.log("OneUI v3.0 Initialized 🚀");
+    console.log("OneUI v4.0 (Ultra) Initialized 🚀");
     loadDependencies();
     initRipples();
-    initNav();
+    initTabs();
     
-    // Create Overlay
-    if (!document.getElementById('oui-overlay')) {
-        const overlay = document.createElement('div');
-        overlay.id = 'oui-overlay';
-        overlay.className = 'oui-overlay';
-        overlay.onclick = () => {
-            document.querySelectorAll('.oui-dialog.active').forEach(d => d.classList.remove('active'));
-            overlay.classList.remove('active');
+    // Create Backdrop
+    if (!document.getElementById('oui-backdrop')) {
+        const bd = document.createElement('div');
+        bd.id = 'oui-backdrop';
+        bd.className = 'oui-overlay-backdrop';
+        bd.onclick = () => {
+            document.querySelectorAll('.active').forEach(e => e.classList.remove('active'));
         };
-        document.body.appendChild(overlay);
+        document.body.appendChild(bd);
     }
 
     // Auto Dark Mode

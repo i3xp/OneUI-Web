@@ -1,19 +1,20 @@
 /* =========================================
-   ONEUI WEB LIBRARY v2.0
+   ONEUI WEB LIBRARY v3.0 (Massive Update)
    ========================================= */
 
-/* 1. TYPOGRAPHY: "Outfit" (Closest free match to Samsung One) */
+/* --- IMPORTS --- */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
     /* --- PALETTE --- */
-    --oui-primary: #007afe;       /* Samsung Blue */
+    --oui-primary: #007afe;
     --oui-primary-dark: #0062cc;
     --oui-primary-dim: rgba(0, 122, 254, 0.12);
     
     --oui-bg: #f2f2f2;
     --oui-surface: #ffffff;
-    --oui-surface-alt: #f7f7f7;
+    --oui-surface-alt: #f7f7f7; /* Input backgrounds */
+    --oui-surface-trans: rgba(255, 255, 255, 0.85); /* Glass */
     
     --oui-text: #000000;
     --oui-text-sec: #888888;
@@ -27,21 +28,24 @@
     --oui-warning: #ffcc00;
 
     /* --- DIMENSIONS --- */
-    --oui-radius-xl: 26px;  /* Cards */
-    --oui-radius-l: 20px;   /* Small Cards */
-    --oui-radius-m: 16px;   /* Inputs */
-    --oui-radius-pill: 50px; /* Buttons */
+    --oui-radius-xl: 26px;
+    --oui-radius-l: 20px;
+    --oui-radius-m: 16px;
+    --oui-radius-pill: 50px;
+    --oui-pad: 22px;
     
-    --oui-pad: 22px;        /* Standard horizontal padding */
-    
-    /* --- ANIMATION --- */
-    --oui-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    /* --- Z-INDEX --- */
+    --z-nav: 800;
+    --z-sheet: 900;
+    --z-dialog: 950;
+    --z-toast: 1000;
 }
 
 [data-theme="dark"] {
-    --oui-bg: #000000;        /* OLED Black */
-    --oui-surface: #1c1c1c;   /* Dark Gray Cards */
+    --oui-bg: #000000;
+    --oui-surface: #1c1c1c;
     --oui-surface-alt: #2c2c2c;
+    --oui-surface-trans: rgba(28, 28, 28, 0.85);
     
     --oui-text: #ffffff;
     --oui-text-sec: #999999;
@@ -49,44 +53,54 @@
     
     --oui-border: #333333;
     --oui-divider: #2a2a2a;
-    
     --oui-primary-dim: rgba(0, 122, 254, 0.3);
 }
 
-/* --- RESET & BASE --- */
+/* --- BASE --- */
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-
 body {
-    font-family: 'Outfit', 'SamsungOne', sans-serif; /* The Font Fix */
+    font-family: 'Outfit', sans-serif;
     background-color: var(--oui-bg);
     color: var(--oui-text);
     margin: 0;
-    font-size: 16px;
-    line-height: 1.5;
+    padding-bottom: 90px; /* Space for Bottom Nav */
     transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
 }
 
-/* --- TYPOGRAPHY UTILS --- */
-h1, h2, h3, p { margin: 0; }
-
-.oui-title-large { font-size: 2.5rem; font-weight: 600; letter-spacing: -0.5px; }
-.oui-title { font-size: 1.4rem; font-weight: 600; }
-.oui-subtitle { font-size: 0.9rem; color: var(--oui-text-sec); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-.oui-text-body { font-size: 1rem; color: var(--oui-text); }
-.oui-text-small { font-size: 0.85rem; color: var(--oui-text-sec); }
+/* --- TYPOGRAPHY --- */
+.oui-title-large { font-size: 2.5rem; font-weight: 600; letter-spacing: -0.5px; margin: 0; }
+.oui-title { font-size: 1.3rem; font-weight: 600; margin: 0; }
+.oui-subtitle { font-size: 0.85rem; color: var(--oui-text-sec); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.oui-text { font-size: 1rem; color: var(--oui-text); }
+.oui-text-sec { font-size: 0.9rem; color: var(--oui-text-sec); }
 
 /* --- LAYOUT --- */
 .oui-viewing-area {
-    padding: 50px var(--oui-pad) 20px;
-    min-height: 140px;
+    padding: 60px var(--oui-pad) 20px;
+    min-height: 160px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
 }
+.oui-container { padding: 0 var(--oui-pad); }
 
-.oui-interaction-area {
-    padding: 0 var(--oui-pad) 100px; /* Bottom padding for nav */
+/* --- SEARCH BAR --- */
+.oui-search {
+    background: var(--oui-surface-alt);
+    border-radius: var(--oui-radius-l);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    transition: 0.2s;
+}
+.oui-search:focus-within { background: var(--oui-surface); box-shadow: 0 0 0 2px var(--oui-primary); }
+.oui-search i { color: var(--oui-text-sec); font-size: 1.2rem; }
+.oui-search input {
+    border: none; background: transparent; width: 100%;
+    font-family: 'Outfit', sans-serif; font-size: 1rem; color: var(--oui-text);
 }
 
 /* --- CARDS --- */
@@ -99,227 +113,148 @@ h1, h2, h3, p { margin: 0; }
     overflow: hidden;
 }
 
-/* --- LISTS (Settings Style) --- */
+/* --- LIST ITEMS --- */
 .oui-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 4px;
-    border-bottom: 1px solid var(--oui-divider);
-    color: var(--oui-text);
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.2s;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 4px; border-bottom: 1px solid var(--oui-divider);
+    cursor: pointer; transition: opacity 0.2s;
 }
 .oui-list-item:last-child { border-bottom: none; }
 .oui-list-item:active { opacity: 0.6; }
-
 .oui-list-icon {
-    font-size: 1.5rem;
-    color: var(--oui-primary);
-    margin-right: 16px;
-    width: 24px;
-    display: flex;
-    justify-content: center;
+    width: 36px; height: 36px; border-radius: 12px;
+    background: var(--oui-primary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-right: 16px;
 }
-.oui-list-content { flex: 1; display: flex; flex-direction: column; }
-.oui-list-action { color: var(--oui-text-ter); font-size: 1.2rem; }
+.oui-list-content { flex: 1; }
+
+/* --- AVATARS & BADGES --- */
+.oui-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background-color: var(--oui-surface-alt);
+    background-size: cover; background-position: center;
+    position: relative;
+}
+.oui-badge {
+    background: var(--oui-danger); color: white;
+    font-size: 0.7rem; font-weight: 700;
+    padding: 2px 6px; border-radius: 10px;
+    position: absolute; top: -2px; right: -2px;
+    border: 2px solid var(--oui-surface);
+}
 
 /* --- BUTTONS --- */
 .oui-btn {
-    position: relative;
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: var(--oui-radius-pill);
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 600;
-    cursor: pointer;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    transition: transform 0.1s;
-    margin-bottom: 12px;
+    position: relative; width: 100%; padding: 16px;
+    border: none; border-radius: var(--oui-radius-pill);
+    font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 600;
+    cursor: pointer; overflow: hidden; display: flex; justify-content: center; align-items: center; gap: 8px;
+    transition: transform 0.1s; margin-bottom: 12px;
 }
 .oui-btn:active { transform: scale(0.98); }
-
 .oui-btn-primary { background: var(--oui-primary); color: white; }
 .oui-btn-secondary { background: var(--oui-primary-dim); color: var(--oui-primary); }
-.oui-btn-ghost { background: transparent; color: var(--oui-text-sec); }
 
-/* Ripple Effect */
-.ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(0);
-    animation: ripple 0.6s linear;
-    pointer-events: none;
+/* --- BOTTOM NAVIGATION (Glassmorphism) --- */
+.oui-bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: var(--oui-surface-trans);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--oui-border);
+    display: flex; justify-content: space-around;
+    padding: 10px 0 25px; /* Extra padding for safe area */
+    z-index: var(--z-nav);
 }
-@keyframes ripple { to { transform: scale(4); opacity: 0; } }
+.oui-nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    color: var(--oui-text-sec); text-decoration: none;
+    font-size: 0.75rem; font-weight: 500; padding: 8px 20px;
+    border-radius: 20px; transition: 0.3s;
+}
+.oui-nav-item i { font-size: 1.6rem; margin-bottom: 2px; transition: 0.3s; }
+.oui-nav-item.active { color: var(--oui-text); }
+.oui-nav-item.active i { font-weight: fill; color: var(--oui-primary); }
 
-/* --- INPUTS --- */
-.oui-input-group {
-    position: relative;
-    margin-bottom: 16px;
-    background: var(--oui-surface-alt);
-    border-radius: var(--oui-radius-m);
-    padding: 24px 16px 8px;
-    border: 1px solid transparent;
-    transition: border-color 0.3s;
-}
-.oui-input-group:focus-within { border-color: var(--oui-primary); }
-
-.oui-input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    font-size: 1rem;
-    color: var(--oui-text);
-    font-family: 'Outfit', sans-serif;
-    padding: 0;
-}
-.oui-label {
-    position: absolute;
-    top: 18px;
-    left: 16px;
-    font-size: 1rem;
-    color: var(--oui-text-sec);
-    transition: 0.2s var(--oui-ease);
-    pointer-events: none;
-}
-.oui-input:focus ~ .oui-label,
-.oui-input:not(:placeholder-shown) ~ .oui-label {
-    top: 8px;
-    font-size: 0.75rem;
-    color: var(--oui-primary);
-}
-
-/* --- SLIDERS (Brightness/Volume) --- */
-.oui-range-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-}
-.oui-range {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 40px; /* Thick touch target */
-    background: transparent;
-}
-.oui-range::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 24px; /* Visual height */
-    background: var(--oui-primary-dim);
-    border-radius: 20px;
-    border: none;
-}
-.oui-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 24px;
-    width: 24px;
-    border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    margin-top: 0; /* Center on track */
-    cursor: pointer;
-}
-/* Firefox support */
-.oui-range::-moz-range-track {
-    width: 100%; height: 24px; background: var(--oui-primary-dim); border-radius: 20px;
-}
-.oui-range::-moz-range-thumb {
-    height: 24px; width: 24px; border: none; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-/* --- TOGGLE SWITCH --- */
-.oui-switch { position: relative; display: inline-block; width: 48px; height: 28px; }
-.oui-switch input { opacity: 0; width: 0; height: 0; }
-.oui-switch-slider {
-    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #b0b0b0; transition: .3s; border-radius: 34px;
-}
-.oui-switch-slider:before {
-    position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px;
-    background-color: white; transition: .3s var(--oui-ease); border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-input:checked + .oui-switch-slider { background-color: var(--oui-primary); }
-input:checked + .oui-switch-slider:before { transform: translateX(20px); }
-
-/* --- SEGMENTED CONTROL (Tabs) --- */
-.oui-tabs {
-    display: flex;
-    background: var(--oui-surface-alt);
-    padding: 4px;
-    border-radius: var(--oui-radius-pill);
-    margin-bottom: 20px;
-}
-.oui-tab {
-    flex: 1;
-    text-align: center;
-    padding: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--oui-text-sec);
-    border-radius: var(--oui-radius-pill);
-    cursor: pointer;
-    transition: 0.3s;
-}
-.oui-tab.active {
-    background: var(--oui-surface);
-    color: var(--oui-text);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-/* --- BOTTOM SHEET --- */
-.oui-sheet-overlay {
+/* --- DIALOG / MODAL --- */
+.oui-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); z-index: 900;
+    background: rgba(0,0,0,0.4); z-index: var(--z-sheet);
     opacity: 0; visibility: hidden; transition: 0.3s;
 }
-.oui-sheet-overlay.active { opacity: 1; visibility: visible; }
+.oui-overlay.active { opacity: 1; visibility: visible; }
 
-.oui-sheet {
-    position: fixed; bottom: -100%; left: 0; width: 100%;
+.oui-dialog {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 85%; max-width: 320px;
     background: var(--oui-surface);
-    border-radius: var(--oui-radius-xl) var(--oui-radius-xl) 0 0;
-    padding: 30px var(--oui-pad) 40px;
-    z-index: 901;
-    transition: bottom 0.4s var(--oui-ease);
-    box-shadow: 0 -5px 30px rgba(0,0,0,0.1);
+    border-radius: var(--oui-radius-xl);
+    padding: 24px;
+    z-index: var(--z-dialog);
+    opacity: 0; visibility: hidden;
+    transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 }
-.oui-sheet.active { bottom: 0; }
-.oui-sheet-handle {
-    width: 40px; height: 5px; background: var(--oui-border);
-    border-radius: 10px; margin: -10px auto 20px;
+.oui-dialog.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+
+/* --- SKELETON LOADING --- */
+.oui-skeleton {
+    background: linear-gradient(90deg, var(--oui-surface-alt) 25%, var(--oui-border) 50%, var(--oui-surface-alt) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* --- PROGRESS BAR --- */
+.oui-progress-track {
+    width: 100%; height: 6px; background: var(--oui-surface-alt);
+    border-radius: 10px; overflow: hidden; margin: 10px 0;
+}
+.oui-progress-fill {
+    height: 100%; background: var(--oui-primary);
+    width: 0%; transition: width 0.5s ease;
 }
 
-/* --- SPINNER --- */
-.oui-spinner {
-    width: 24px; height: 24px;
-    border: 3px solid var(--oui-primary-dim);
-    border-top: 3px solid var(--oui-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+/* --- RADIO & CHECKBOX --- */
+.oui-radio-group { display: flex; flex-direction: column; gap: 12px; }
+.oui-radio {
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
 }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.oui-radio input { display: none; }
+.oui-radio-circle {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--oui-text-sec);
+    position: relative; transition: 0.2s;
+}
+.oui-radio input:checked + .oui-radio-circle {
+    border-color: var(--oui-primary);
+}
+.oui-radio input:checked + .oui-radio-circle::after {
+    content: ''; position: absolute; top: 4px; left: 4px;
+    width: 10px; height: 10px; background: var(--oui-primary);
+    border-radius: 50%;
+}
 
 /* --- TOAST --- */
 #oui-toast {
     visibility: hidden; min-width: 200px;
-    background-color: rgba(40, 40, 40, 0.9);
-    backdrop-filter: blur(10px);
+    background-color: rgba(40, 40, 40, 0.95);
     color: #fff; text-align: center;
     border-radius: 50px; padding: 14px 24px;
-    position: fixed; z-index: 1000;
-    left: 50%; bottom: 30px;
+    position: fixed; z-index: var(--z-toast);
+    left: 50%; bottom: 100px; /* Above nav */
     transform: translateX(-50%) scale(0.9);
-    opacity: 0; transition: all 0.3s var(--oui-ease);
+    opacity: 0; transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     font-size: 0.9rem; font-weight: 500;
 }
-#oui-toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) scale(1); bottom: 50px; }
+#oui-toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) scale(1); bottom: 110px; }
+
+/* --- RIPPLE --- */
+.ripple {
+    position: absolute; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0); animation: ripple 0.6s linear; pointer-events: none;
+}
+@keyframes ripple { to { transform: scale(4); opacity: 0; } }

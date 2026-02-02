@@ -1,43 +1,165 @@
 /* style.css */
+
+/* 1. Auto-Load Fonts inside the CSS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
-    --bg-color: #f2f2f2;
-    --surface-color: #ffffff;
-    --text-primary: #000000;
-    --accent-color: #007afe;
-    --radius-l: 26px;
-    --radius-m: 18px;
-    --font-family: 'Inter', sans-serif;
+    /* OneUI Colors */
+    --oui-bg: #f2f2f2;
+    --oui-surface: #ffffff;
+    --oui-text-primary: #000000;
+    --oui-text-secondary: #8c8c8c;
+    --oui-accent: #007afe; /* Samsung Blue */
+    --oui-accent-dim: rgba(0, 122, 254, 0.12);
+    --oui-border: #e0e0e0;
+    --oui-danger: #ff3b30;
+    
+    /* Dimensions */
+    --oui-radius: 26px; /* The signature OneUI roundness */
+    --oui-pad: 20px;
 }
 
 [data-theme="dark"] {
-    --bg-color: #000000;
-    --surface-color: #1c1c1c;
-    --text-primary: #ffffff;
+    --oui-bg: #000000;
+    --oui-surface: #1c1c1c;
+    --oui-text-primary: #ffffff;
+    --oui-text-secondary: #999999;
+    --oui-border: #333333;
+    --oui-accent-dim: rgba(0, 122, 254, 0.3);
 }
 
+/* Base Reset */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body {
-    font-family: var(--font-family);
-    background-color: var(--bg-color);
-    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    background-color: var(--oui-bg);
+    color: var(--oui-text-primary);
     margin: 0;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Utility Classes */
+/* --- Layout Components --- */
+
+/* The "Viewing Area" (Big Header) */
+.oneui-header {
+    padding: 40px var(--oui-pad) 10px;
+}
+.oneui-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+.oneui-header .subtitle {
+    color: var(--oui-text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* The "Interaction Area" (Container) */
+.oneui-container {
+    padding: 0 var(--oui-pad) 40px;
+}
+
+/* Cards */
 .oneui-card {
-    background: var(--surface-color);
-    border-radius: var(--radius-l);
+    background: var(--oui-surface);
+    border-radius: var(--oui-radius);
     padding: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.02);
 }
 
+/* List Items (Like Settings) */
+.oneui-list {
+    display: flex;
+    flex-direction: column;
+}
+.oneui-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--oui-border);
+    color: var(--oui-text-primary);
+    text-decoration: none;
+}
+.oneui-item:last-child { border-bottom: none; }
+.oneui-item i { font-size: 1.5rem; color: var(--oui-text-secondary); }
+
+/* Buttons */
 .oneui-btn {
-    background: var(--accent-color);
+    background: var(--oui-accent);
     color: white;
     border: none;
-    padding: 12px 24px;
+    padding: 14px;
     border-radius: 50px;
+    font-size: 1rem;
     font-weight: 600;
-    cursor: pointer;
     width: 100%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.1s;
 }
+.oneui-btn:active { transform: scale(0.97); }
+.oneui-btn.secondary {
+    background: var(--oui-accent-dim);
+    color: var(--oui-accent);
+}
+
+/* Toggle Switch */
+.oneui-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+}
+.oneui-switch input { opacity: 0; width: 0; height: 0; }
+.oneui-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+.oneui-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+input:checked + .oneui-slider { background-color: var(--oui-accent); }
+input:checked + .oneui-slider:before { transform: translateX(20px); }
+
+/* Toast */
+#oneui-toast {
+    visibility: hidden;
+    min-width: 250px;
+    background-color: rgba(50, 50, 50, 0.95);
+    color: #fff;
+    text-align: center;
+    border-radius: 50px;
+    padding: 14px 20px;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.3s, bottom 0.3s;
+    backdrop-filter: blur(10px);
+}
+#oneui-toast.show { visibility: visible; opacity: 1; bottom: 50px; }

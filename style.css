@@ -1,98 +1,150 @@
-/*!
- * OneUI Web Library v5.0.0
- * Copyright (c) 2024
- * Licensed under MIT
- */
+/* ==========================================================================
+   ONEUI WEB LIBRARY - DEFINITIVE EDITION (v5.0 + Ultra)
+   ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+/* --- 1. CORE IMPORTS & FONTS --- */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
+/* --- 2. DESIGN TOKENS --- */
 :root {
-    /* Core Palette */
+    /* Brand Colors */
     --oui-primary: #007afe;
     --oui-primary-dark: #0062cc;
-    --oui-primary-alpha: rgba(0, 122, 254, 0.12);
+    --oui-primary-light: #4c9eff;
+    --oui-primary-dim: rgba(0, 122, 254, 0.12);
     
-    /* Semantic Colors */
+    /* Functional Colors */
     --oui-success: #34c759;
     --oui-warning: #ffcc00;
     --oui-danger: #ff3b30;
+    --oui-info: #5856d6;
     
-    /* Surface & Background */
+    /* Neutral Colors (Light Mode) */
     --oui-bg: #f2f2f2;
     --oui-surface: #ffffff;
     --oui-surface-alt: #f7f7f7;
-    --oui-surface-glass: rgba(255, 255, 255, 0.9);
-    
-    /* Typography */
-    --oui-text: #000000;
-    --oui-text-muted: #8c8c8c;
-    --oui-text-placeholder: #c7c7c7;
-    
-    /* Borders & Dividers */
+    --oui-surface-trans: rgba(255, 255, 255, 0.85);
     --oui-border: #e0e0e0;
     --oui-divider: #f0f0f0;
     
-    /* Spacing & Radius */
+    /* Text Colors */
+    --oui-text: #000000;
+    --oui-text-sec: #8c8c8c;
+    --oui-text-ter: #c7c7c7;
+    --oui-text-inv: #ffffff;
+
+    /* Dimensions & Shape */
     --oui-radius-xl: 26px;
     --oui-radius-l: 20px;
     --oui-radius-m: 16px;
     --oui-radius-s: 12px;
-    --oui-radius-pill: 999px;
-    --oui-space-unit: 4px;
+    --oui-radius-pill: 50px;
+    --oui-pad: 24px;
     
-    /* Animation Physics */
-    --oui-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --oui-ease-smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* Physics & Animation */
+    --oui-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy */
+    --oui-ease: cubic-bezier(0.25, 0.8, 0.25, 1);    /* Smooth */
+    --oui-duration: 0.4s;
     
-    /* Z-Index Registry */
+    /* Z-Index Layers */
+    --z-back: -1;
+    --z-base: 1;
+    --z-sticky: 100;
     --z-nav: 800;
-    --z-backdrop: 900;
-    --z-sheet: 950;
+    --z-overlay: 900;
+    --z-modal: 950;
     --z-toast: 1000;
 }
 
+/* Dark Mode Overrides */
 [data-theme="dark"] {
     --oui-bg: #000000;
     --oui-surface: #1c1c1c;
     --oui-surface-alt: #2c2c2c;
-    --oui-surface-glass: rgba(28, 28, 28, 0.9);
+    --oui-surface-trans: rgba(28, 28, 28, 0.85);
     --oui-border: #333333;
     --oui-divider: #2a2a2a;
+    
     --oui-text: #ffffff;
-    --oui-text-muted: #999999;
-    --oui-text-placeholder: #555555;
-    --oui-primary-alpha: rgba(0, 122, 254, 0.3);
+    --oui-text-sec: #999999;
+    --oui-text-ter: #555555;
+    --oui-text-inv: #000000;
+    
+    --oui-primary-dim: rgba(0, 122, 254, 0.3);
 }
 
-/* --- Reset & Base --- */
-*, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
-html, body { height: 100%; margin: 0; overflow-x: hidden; }
+/* --- 3. RESET & BASE STYLES --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    user-select: none; /* App-like feel */
+}
+
+/* Allow text selection on inputs/paragraphs */
+p, h1, h2, h3, h4, h5, h6, input, textarea, pre, code { user-select: text; }
+
 body {
-    font-family: 'Outfit', -apple-system, sans-serif;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: var(--oui-bg);
     color: var(--oui-text);
+    margin: 0;
+    padding-bottom: 100px; /* Safe area for bottom nav */
     font-size: 16px;
     line-height: 1.5;
-    transition: background-color 0.3s, color 0.3s;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
-p, h1, h2, h3, input, textarea { user-select: text; margin: 0; }
 
-/* --- Layout System --- */
-.oui-view {
-    padding: 70px 24px 120px; /* Top, Side, Bottom (Nav) */
-    min-height: 100vh;
+/* Scrollbar Hiding */
+::-webkit-scrollbar { width: 0px; background: transparent; }
+
+/* --- 4. TYPOGRAPHY SYSTEM --- */
+.oui-display { font-size: 3rem; font-weight: 700; letter-spacing: -1px; line-height: 1.1; }
+.oui-h1 { font-size: 2.2rem; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 8px; }
+.oui-h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 8px; }
+.oui-h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 4px; }
+.oui-sub { 
+    font-size: 0.85rem; 
+    color: var(--oui-text-sec); 
+    font-weight: 600; 
+    text-transform: uppercase; 
+    letter-spacing: 1.5px; 
+    margin-bottom: 6px; 
+}
+.oui-body { font-size: 1rem; color: var(--oui-text); }
+.oui-caption { font-size: 0.85rem; color: var(--oui-text-sec); }
+.oui-link { color: var(--oui-primary); text-decoration: none; font-weight: 500; }
+.oui-code { 
+    font-family: 'Courier New', monospace; 
+    background: var(--oui-surface-alt); 
+    padding: 2px 6px; 
+    border-radius: 4px; 
+    font-size: 0.9em; 
+    color: var(--oui-primary);
+}
+
+/* --- 5. LAYOUT & CONTAINERS --- */
+.oui-viewing-area {
+    padding: 70px var(--oui-pad) 20px;
+    min-height: 180px;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
+    transition: all 0.3s var(--oui-ease);
 }
+.oui-viewing-area.collapsed { min-height: 100px; padding-top: 40px; }
 
-/* Grid System (12 Col) */
+.oui-container { padding: 0 var(--oui-pad); max-width: 800px; margin: 0 auto; }
+
+/* --- 5.1 GRID SYSTEM (NEW) --- */
 .oui-row { display: flex; flex-wrap: wrap; margin: 0 -8px; }
 .oui-col { flex: 1; padding: 0 8px; }
 .oui-col-12 { width: 100%; padding: 0 8px; }
 .oui-col-6 { width: 50%; padding: 0 8px; }
 .oui-col-4 { width: 33.33%; padding: 0 8px; }
 
-/* Horizontal Scroll Snap (Stories/Gallery) */
+/* --- 5.2 SCROLL SNAP (NEW) --- */
 .oui-scroll-x {
     display: flex;
     gap: 12px;
@@ -102,131 +154,341 @@ p, h1, h2, h3, input, textarea { user-select: text; margin: 0; }
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
-.oui-scroll-x::-webkit-scrollbar { display: none; }
 .oui-scroll-x > * { scroll-snap-align: start; flex-shrink: 0; }
 
-/* --- Components --- */
+/* --- 6. ANIMATIONS --- */
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
 
-/* Typography */
-.oui-text-display { font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; }
-.oui-text-h1 { font-size: 1.75rem; font-weight: 600; }
-.oui-text-h2 { font-size: 1.25rem; font-weight: 600; }
-.oui-text-sub { font-size: 0.875rem; color: var(--oui-text-muted); font-weight: 500; }
+/* Staggered List Animation Helper */
+.oui-animate-list > * {
+    opacity: 0;
+    animation: slideUpFade 0.5s var(--oui-ease) forwards;
+}
+.oui-animate-list > *:nth-child(1) { animation-delay: 0.05s; }
+.oui-animate-list > *:nth-child(2) { animation-delay: 0.1s; }
+.oui-animate-list > *:nth-child(3) { animation-delay: 0.15s; }
+.oui-animate-list > *:nth-child(4) { animation-delay: 0.2s; }
+.oui-animate-list > *:nth-child(5) { animation-delay: 0.25s; }
 
-/* Cards */
+/* --- 7. CARDS & SURFACES --- */
 .oui-card {
     background: var(--oui-surface);
     border-radius: var(--oui-radius-xl);
     padding: 24px;
     margin-bottom: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.02);
-    transition: transform 0.2s;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.02);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
-.oui-card.is-clickable:active { transform: scale(0.98); }
+.oui-card.interactive:active { transform: scale(0.98); }
 
-/* Buttons */
+/* --- 8. BUTTONS --- */
 .oui-btn {
+    position: relative;
     width: 100%;
-    padding: 16px;
+    padding: 16px 24px;
     border: none;
     border-radius: var(--oui-radius-pill);
-    font-family: inherit;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.05rem;
     font-weight: 600;
-    font-size: 1rem;
     cursor: pointer;
-    display: flex; justify-content: center; align-items: center; gap: 8px;
-    transition: transform 0.1s;
-    position: relative; overflow: hidden;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.1s, background-color 0.2s;
+    margin-bottom: 12px;
 }
-.oui-btn:active { transform: scale(0.97); }
-.oui-btn-primary { background: var(--oui-primary); color: #fff; }
-.oui-btn-secondary { background: var(--oui-primary-alpha); color: var(--oui-primary); }
-.oui-btn-ghost { background: transparent; color: var(--oui-text-muted); }
+.oui-btn:active { transform: scale(0.96); }
 
-/* Inputs */
-.oui-input-wrapper {
-    background: var(--oui-surface-alt);
-    border-radius: var(--oui-radius-m);
-    padding: 24px 16px 8px;
+.oui-btn-primary { background: var(--oui-primary); color: white; }
+.oui-btn-primary:hover { background: var(--oui-primary-dark); }
+
+.oui-btn-secondary { background: var(--oui-primary-dim); color: var(--oui-primary); }
+.oui-btn-secondary:active { background: rgba(0, 122, 254, 0.2); }
+
+.oui-btn-outline { 
+    background: transparent; 
+    border: 2px solid var(--oui-primary); 
+    color: var(--oui-primary); 
+    padding: 14px 24px; /* Adjust for border */
+}
+
+.oui-btn-ghost { background: transparent; color: var(--oui-text-sec); }
+.oui-btn-ghost:active { background: var(--oui-surface-alt); color: var(--oui-text); }
+
+.oui-btn-danger { background: rgba(255, 59, 48, 0.1); color: var(--oui-danger); }
+
+/* --- 9. FORMS & INPUTS (Floating Labels) --- */
+.oui-input-group {
     position: relative;
     margin-bottom: 16px;
+    background: var(--oui-surface-alt);
+    border-radius: var(--oui-radius-m);
     border: 1px solid transparent;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+.oui-input-group:focus-within { 
+    border-color: var(--oui-primary); 
+    background: var(--oui-surface);
+}
+
+.oui-input, .oui-textarea, .oui-select {
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    color: var(--oui-text);
+    padding: 26px 16px 10px; /* Space for label */
+    border-radius: var(--oui-radius-m);
+    appearance: none;
+}
+.oui-textarea { resize: none; min-height: 100px; }
+
+.oui-label-float {
+    position: absolute;
+    top: 18px;
+    left: 16px;
+    font-size: 1rem;
+    color: var(--oui-text-sec);
+    transition: 0.2s var(--oui-ease);
+    pointer-events: none;
+    transform-origin: left top;
+}
+
+/* Float Logic */
+.oui-input:focus ~ .oui-label-float,
+.oui-input:not(:placeholder-shown) ~ .oui-label-float,
+.oui-textarea:focus ~ .oui-label-float,
+.oui-textarea:not(:placeholder-shown) ~ .oui-label-float,
+.oui-select:focus ~ .oui-label-float,
+.oui-select:valid ~ .oui-label-float {
+    transform: translateY(-10px) scale(0.85);
+    color: var(--oui-primary);
+}
+
+/* Search Bar */
+.oui-search {
+    background: var(--oui-surface-alt);
+    border-radius: var(--oui-radius-l);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
     transition: 0.2s;
 }
-.oui-input-wrapper:focus-within { border-color: var(--oui-primary); background: var(--oui-surface); }
-.oui-input {
-    width: 100%; background: transparent; border: none;
-    font-size: 1rem; color: var(--oui-text); font-family: inherit;
-}
-.oui-label {
-    position: absolute; top: 18px; left: 16px;
-    font-size: 1rem; color: var(--oui-text-muted);
-    pointer-events: none; transition: 0.2s var(--oui-ease-smooth);
-}
-.oui-input:focus ~ .oui-label,
-.oui-input:not(:placeholder-shown) ~ .oui-label {
-    transform: translateY(-10px) scale(0.85); color: var(--oui-primary); transform-origin: left;
+.oui-search:focus-within { background: var(--oui-surface); box-shadow: 0 0 0 2px var(--oui-primary); }
+.oui-search input { border: none; background: transparent; width: 100%; font-size: 1rem; color: var(--oui-text); }
+
+/* --- 10. LISTS & SETTINGS --- */
+.oui-list { display: flex; flex-direction: column; }
+.oui-list.inset { 
+    background: var(--oui-surface); 
+    border-radius: var(--oui-radius-xl); 
+    overflow: hidden; 
+    margin-bottom: 20px;
 }
 
-/* Lists */
-.oui-list { background: var(--oui-surface); border-radius: var(--oui-radius-xl); overflow: hidden; }
-.oui-list-item {
-    padding: 18px 24px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--oui-divider);
-    cursor: pointer; position: relative; overflow: hidden;
-}
-.oui-list-item:last-child { border-bottom: none; }
-.oui-list-item:active { background-color: var(--oui-surface-alt); }
-
-/* Bottom Sheet */
-.oui-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: var(--z-backdrop);
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.3s;
-    backdrop-filter: blur(4px);
-}
-.oui-backdrop.is-visible { opacity: 1; pointer-events: auto; }
-
-.oui-sheet {
-    position: fixed; left: 0; right: 0; bottom: 0;
+.oui-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 20px;
     background: var(--oui-surface);
-    border-radius: var(--oui-radius-xl) var(--oui-radius-xl) 0 0;
-    padding: 12px 24px 40px;
-    z-index: var(--z-sheet);
-    transform: translateY(100%);
-    transition: transform 0.4s var(--oui-ease-spring);
-    touch-action: none; /* Critical for gestures */
+    border-bottom: 1px solid var(--oui-divider);
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+    overflow: hidden;
 }
-.oui-sheet.is-visible { transform: translateY(0); }
-.oui-sheet-handle {
-    width: 40px; height: 5px; background: var(--oui-border);
-    border-radius: 10px; margin: 0 auto 24px;
-}
+.oui-list.inset .oui-item { padding: 18px 24px; }
+.oui-item:last-child { border-bottom: none; }
+.oui-item:active { background-color: var(--oui-surface-alt); }
 
-/* Navigation */
-.oui-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--oui-surface-glass);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+.oui-item-icon {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: var(--oui-surface-alt); color: var(--oui-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-right: 16px;
+    flex-shrink: 0;
+}
+.oui-item-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.oui-item-title { font-weight: 500; font-size: 1rem; }
+.oui-item-desc { font-size: 0.85rem; color: var(--oui-text-sec); }
+.oui-item-end { color: var(--oui-text-ter); display: flex; align-items: center; gap: 10px; }
+
+/* --- 11. TOGGLES, RADIOS, CHECKS --- */
+/* Switch */
+.oui-switch { position: relative; display: inline-block; width: 50px; height: 30px; flex-shrink: 0; }
+.oui-switch input { opacity: 0; width: 0; height: 0; }
+.oui-switch-track {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #e0e0e0; transition: .3s var(--oui-spring); border-radius: 34px;
+}
+.oui-switch-thumb {
+    position: absolute; content: ""; height: 24px; width: 24px; left: 3px; bottom: 3px;
+    background-color: white; transition: .3s var(--oui-spring); border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+input:checked + .oui-switch-track { background-color: var(--oui-primary); }
+input:checked + .oui-switch-track .oui-switch-thumb { transform: translateX(20px); }
+
+/* Radio */
+.oui-radio { display: flex; align-items: center; gap: 12px; padding: 12px 0; cursor: pointer; }
+.oui-radio input { display: none; }
+.oui-radio-circle {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--oui-text-ter);
+    position: relative; transition: 0.2s;
+}
+.oui-radio input:checked + .oui-radio-circle { border-color: var(--oui-primary); border-width: 6px; }
+
+/* --- 12. NAVIGATION COMPONENTS --- */
+/* Bottom Nav */
+.oui-bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: var(--oui-surface-trans);
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
     border-top: 1px solid var(--oui-border);
     display: flex; justify-content: space-around;
-    padding: 12px 0 32px;
+    padding: 8px 0 28px;
     z-index: var(--z-nav);
 }
-.oui-nav-link {
+.oui-nav-item {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    text-decoration: none; color: var(--oui-text-muted);
-    font-size: 0.75rem; font-weight: 500;
-    transition: 0.2s;
+    color: var(--oui-text-sec); text-decoration: none;
+    font-size: 0.7rem; font-weight: 500; padding: 8px 20px;
+    border-radius: 20px; transition: 0.3s; position: relative;
 }
-.oui-nav-link.is-active { color: var(--oui-text); }
-.oui-nav-link i { font-size: 1.5rem; margin-bottom: 2px; transition: 0.2s; }
-.oui-nav-link.is-active i { color: var(--oui-primary); font-weight: bold; transform: translateY(-2px); }
+.oui-nav-item i { font-size: 1.6rem; margin-bottom: 2px; transition: 0.3s var(--oui-spring); }
+.oui-nav-item.active { color: var(--oui-text); }
+.oui-nav-item.active i { color: var(--oui-primary); transform: translateY(-2px); font-weight: bold; }
 
-/* Utilities */
+/* Segmented Control (Tabs) */
+.oui-segments {
+    display: flex; background: var(--oui-surface-alt);
+    padding: 4px; border-radius: var(--oui-radius-pill);
+    margin-bottom: 24px; position: relative;
+}
+.oui-segment-btn {
+    flex: 1; text-align: center; padding: 10px;
+    font-size: 0.9rem; font-weight: 600; color: var(--oui-text-sec);
+    border-radius: var(--oui-radius-pill); cursor: pointer;
+    transition: 0.3s; z-index: 2;
+}
+.oui-segment-btn.active { color: var(--oui-text); }
+/* The sliding background for tabs */
+.oui-segment-glider {
+    position: absolute; top: 4px; bottom: 4px; left: 4px;
+    width: calc(33.33% - 8px); /* Assuming 3 tabs */
+    background: var(--oui-surface);
+    border-radius: var(--oui-radius-pill);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: 0.3s var(--oui-spring); z-index: 1;
+}
+
+/* --- 13. OVERLAYS (Dialogs & Sheets) --- */
+.oui-overlay-backdrop {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4); z-index: var(--z-overlay);
+    opacity: 0; visibility: hidden; transition: 0.4s;
+    backdrop-filter: blur(4px);
+}
+.oui-overlay-backdrop.active { opacity: 1; visibility: visible; }
+
+/* Bottom Sheet */
+.oui-sheet {
+    position: fixed; bottom: -100%; left: 0; width: 100%;
+    background: var(--oui-surface);
+    border-radius: var(--oui-radius-xl) var(--oui-radius-xl) 0 0;
+    padding: 10px var(--oui-pad) 40px;
+    z-index: var(--z-modal);
+    transition: bottom 0.5s var(--oui-spring);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+}
+.oui-sheet.active { bottom: 0; }
+.oui-sheet-handle {
+    width: 40px; height: 5px; background: var(--oui-border);
+    border-radius: 10px; margin: 10px auto 30px;
+}
+
+/* Dialog */
+.oui-dialog {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -40%) scale(0.9);
+    width: 85%; max-width: 340px;
+    background: var(--oui-surface);
+    border-radius: var(--oui-radius-xl);
+    padding: 24px;
+    z-index: var(--z-modal);
+    opacity: 0; visibility: hidden;
+    transition: 0.4s var(--oui-spring);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.oui-dialog.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+
+/* --- 14. FEEDBACK & UTILS --- */
+/* Toast */
+#oui-toast {
+    visibility: hidden; min-width: 200px;
+    background-color: rgba(40, 40, 40, 0.95);
+    color: #fff; text-align: center;
+    border-radius: 50px; padding: 14px 24px;
+    position: fixed; z-index: var(--z-toast);
+    left: 50%; bottom: 100px;
+    transform: translateX(-50%) scale(0.9);
+    opacity: 0; transition: all 0.3s var(--oui-spring);
+    font-size: 0.95rem; font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+#oui-toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) scale(1); bottom: 110px; }
+
+/* Chips */
+.oui-chip-group { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+.oui-chip {
+    padding: 8px 16px; background: var(--oui-surface-alt);
+    border-radius: 20px; font-size: 0.9rem; font-weight: 500;
+    color: var(--oui-text-sec); white-space: nowrap; transition: 0.2s;
+    border: 1px solid transparent;
+}
+.oui-chip.active { background: var(--oui-primary-dim); color: var(--oui-primary); border-color: var(--oui-primary); }
+
+/* Alert */
+.oui-alert {
+    padding: 16px; border-radius: var(--oui-radius-m);
+    background: rgba(255, 204, 0, 0.15); color: #d48806;
+    display: flex; gap: 12px; align-items: start; margin-bottom: 20px;
+}
+.oui-alert i { font-size: 1.2rem; margin-top: 2px; }
+
+/* Ripple Effect */
+.ripple {
+    position: absolute; border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(0); animation: ripple 0.6s linear; pointer-events: none;
+}
+[data-theme="dark"] .ripple { background: rgba(255, 255, 255, 0.1); }
+@keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+/* Skeleton */
+.oui-skeleton {
+    background: linear-gradient(90deg, var(--oui-surface-alt) 25%, var(--oui-border) 50%, var(--oui-surface-alt) 75%);
+    background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px;
+}
+
+/* --- 15. UTILITIES (NEW) --- */
 .oui-mt-1 { margin-top: 4px; }
 .oui-mt-2 { margin-top: 8px; }
 .oui-mt-4 { margin-top: 16px; }
@@ -235,11 +497,3 @@ p, h1, h2, h3, input, textarea { user-select: text; margin: 0; }
 .oui-text-center { text-align: center; }
 .oui-flex-center { display: flex; align-items: center; justify-content: center; }
 .oui-w-100 { width: 100%; }
-
-/* Ripple */
-.oui-ripple {
-    position: absolute; border-radius: 50%;
-    background: currentColor; opacity: 0.1;
-    transform: scale(0); animation: ripple 0.6s linear; pointer-events: none;
-}
-@keyframes ripple { to { transform: scale(4); opacity: 0; } }

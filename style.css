@@ -1,0 +1,43 @@
+/* style.css */
+:root {
+    --bg-color: #f2f2f2;
+    --surface-color: #ffffff;
+    --text-primary: #000000;
+    --accent-color: #007afe;
+    --radius-l: 26px;
+    --radius-m: 18px;
+    --font-family: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+    --bg-color: #000000;
+    --surface-color: #1c1c1c;
+    --text-primary: #ffffff;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    margin: 0;
+    transition: background-color 0.3s;
+}
+
+/* Utility Classes */
+.oneui-card {
+    background: var(--surface-color);
+    border-radius: var(--radius-l);
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+.oneui-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+}

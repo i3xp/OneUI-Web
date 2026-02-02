@@ -1,152 +1,155 @@
-/**
- * OneUI Web Library v5.0.0
- * Core Logic & Gesture Engine
- */
+// =========================================
+// ONEUI WEB LIBRARY v6.0 - LOGIC CORE
+// =========================================
 
-const CONFIG = {
-    cdnIcons: 'https://unpkg.com/@phosphor-icons/web',
-    themeAttr: 'data-theme'
-};
-
-/**
- * Dynamic Resource Loader
- */
-const loadResources = () => {
-    if (!document.querySelector(`script[src="${CONFIG.cdnIcons}"]`)) {
+// 1. Dynamic Resource Loader (Icons + Lenis)
+function loadDependencies() {
+    // Phosphor Icons
+    if (!document.querySelector('script[src*="phosphor-icons"]')) {
         const script = document.createElement('script');
-        script.src = CONFIG.cdnIcons;
+        script.src = "https://unpkg.com/@phosphor-icons/web";
         document.head.appendChild(script);
     }
-};
 
-/**
- * Ripple Effect Engine
- * Attaches to document to handle all interactive elements dynamically.
- */
-const initRippleEngine = () => {
-    document.addEventListener('mousedown', triggerRipple);
-    document.addEventListener('touchstart', triggerRipple, { passive: true });
-
-    function triggerRipple(e) {
-        const target = e.target.closest('.oui-btn, .oui-list-item, .oui-nav-link');
-        if (!target || target.disabled) return;
-
-        const rect = target.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-
-        const ripple = document.createElement('span');
-        ripple.className = 'oui-ripple';
-        ripple.style.width = ripple.style.height = `${size}px`;
-        ripple.style.left = `${x - size/2}px`;
-        ripple.style.top = `${y - size/2}px`;
-
-        const existing = target.querySelector('.oui-ripple');
-        if (existing) existing.remove();
-
-        target.appendChild(ripple);
-    }
-};
-
-/**
- * Bottom Sheet Manager with Swipe Physics
- */
-class SheetManager {
-    constructor() {
-        this.overlay = this.createOverlay();
-        this.activeSheet = null;
-        this.startY = 0;
-        this.currentY = 0;
-        this.isDragging = false;
-    }
-
-    createOverlay() {
-        const el = document.createElement('div');
-        el.className = 'oui-backdrop';
-        el.onclick = () => this.closeAll();
-        document.body.appendChild(el);
-        return el;
-    }
-
-    open(id) {
-        const sheet = document.getElementById(id);
-        if (!sheet) return;
-
-        this.activeSheet = sheet;
-        this.overlay.classList.add('is-visible');
-        sheet.classList.add('is-visible');
-        
-        // Attach Gesture Listeners
-        this.attachGestures(sheet);
-    }
-
-    closeAll() {
-        if (this.activeSheet) {
-            this.activeSheet.classList.remove('is-visible');
-            this.activeSheet.style.transform = ''; // Reset inline styles
-            this.activeSheet = null;
-        }
-        this.overlay.classList.remove('is-visible');
-    }
-
-    attachGestures(sheet) {
-        sheet.ontouchstart = (e) => {
-            this.startY = e.touches[0].clientY;
-            this.isDragging = true;
-            sheet.style.transition = 'none'; // Disable spring during drag
-        };
-
-        sheet.ontouchmove = (e) => {
-            if (!this.isDragging) return;
-            const deltaY = e.touches[0].clientY - this.startY;
-            
-            // Only allow dragging down
-            if (deltaY > 0) {
-                e.preventDefault();
-                sheet.style.transform = `translateY(${deltaY}px)`;
-            }
-        };
-
-        sheet.ontouchend = (e) => {
-            this.isDragging = false;
-            sheet.style.transition = ''; // Re-enable spring
-            const deltaY = e.changedTouches[0].clientY - this.startY;
-
-            // Threshold to close (100px)
-            if (deltaY > 100) {
-                this.closeAll();
-            } else {
-                sheet.style.transform = ''; // Bounce back
-            }
-        };
+    // Lenis Smooth Scroll
+    if (!document.querySelector('script[src*="lenis"]')) {
+        const script = document.createElement('script');
+        script.src = "https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js";
+        script.onload = initLenis;
+        document.head.appendChild(script);
     }
 }
 
-// Singleton Instance
-const sheetManager = new SheetManager();
+// 2. Initialize Lenis
+function initLenis() {
+    if (typeof Lenis !== 'undefined') {
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        });
 
-/**
- * Public API
- */
-export const OneUI = {
-    init: () => {
-        loadResources();
-        initRippleEngine();
-        
-        // Auto Dark Mode
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.setAttribute(CONFIG.themeAttr, 'dark');
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
         }
-        console.info('OneUI v5.0 Ready');
-    },
-    
-    toggleTheme: () => {
-        const root = document.documentElement;
-        const isDark = root.getAttribute(CONFIG.themeAttr) === 'dark';
-        root.setAttribute(CONFIG.themeAttr, isDark ? 'light' : 'dark');
-    },
+        requestAnimationFrame(raf);
+        console.log("OneUI: Smooth Scroll Enabled 🌊");
+    }
+}
 
-    openSheet: (id) => sheetManager.open(id),
-    closeSheet: () => sheetManager.closeAll()
+// 3. Ripple Engine
+function initRipples() {
+    document.addEventListener('mousedown', createRipple);
+    document.addEventListener('touchstart', createRipple, { passive: true });
+
+    function createRipple(e) {
+        const target = e.target.closest('.oui-btn, .oui-item, .oui-chip, .oui-nav-item');
+        if (!target || target.disabled) return;
+
+        const circle = document.createElement('span');
+        const diameter = Math.max(target.clientWidth, target.clientHeight);
+        const radius = diameter / 2;
+        const rect = target.getBoundingClientRect();
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${clientX - rect.left - radius}px`;
+        circle.style.top = `${clientY - rect.top - radius}px`;
+        circle.classList.add('ripple');
+        
+        const existing = target.getElementsByClassName('ripple')[0];
+        if (existing) existing.remove();
+        
+        target.appendChild(circle);
+    }
+}
+
+// 4. Overlay Manager
+export function toggleOverlay(id) {
+    const el = document.getElementById(id);
+    const backdrop = document.getElementById('oui-backdrop');
+    
+    if (el.classList.contains('active')) {
+        el.classList.remove('active');
+        backdrop.classList.remove('active');
+    } else {
+        document.querySelectorAll('.oui-sheet.active, .oui-dialog.active').forEach(e => e.classList.remove('active'));
+        el.classList.add('active');
+        backdrop.classList.add('active');
+    }
+}
+
+// 5. Tab Logic
+export function initTabs() {
+    const segments = document.querySelectorAll('.oui-segment-btn');
+    segments.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+            const parent = btn.closest('.oui-segments');
+            const glider = parent.querySelector('.oui-segment-glider');
+            parent.querySelectorAll('.oui-segment-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            glider.style.transform = `translateX(${index * 100}%)`;
+        });
+    });
+}
+
+// 6. Theme Toggle
+export function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    return next;
+}
+
+// 7. Toast
+export function showToast(message) {
+    let toast = document.getElementById('oui-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'oui-toast';
+        document.body.appendChild(toast);
+    }
+    toast.innerText = message;
+    toast.className = "show";
+    if (toast.timeout) clearTimeout(toast.timeout);
+    toast.timeout = setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+}
+
+// 8. Initialization
+export function initOneUI() {
+    console.log("OneUI v6.0 (Silk) Initialized 🚀");
+    loadDependencies();
+    initRipples();
+    initTabs();
+    
+    if (!document.getElementById('oui-backdrop')) {
+        const bd = document.createElement('div');
+        bd.id = 'oui-backdrop';
+        bd.className = 'oui-overlay-backdrop';
+        bd.onclick = () => {
+            document.querySelectorAll('.active').forEach(e => e.classList.remove('active'));
+        };
+        document.body.appendChild(bd);
+    }
+
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
+}
+
+// 9. Global Export (Fixes SyntaxError)
+window.OneUI = {
+    init: initOneUI,
+    toggleTheme: toggleTheme,
+    showToast: showToast,
+    toggleOverlay: toggleOverlay
 };

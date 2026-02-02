@@ -1,21 +1,23 @@
 // =========================================
-// ONEUI WEB LIBRARY v6.0 - LOGIC CORE
+// ONEUI WEB LIBRARY v6.1 - CORE
 // =========================================
 
-// 1. Dynamic Resource Loader (Icons + Lenis)
+// 1. Reliable Resource Loader
 function loadDependencies() {
-    // Phosphor Icons
+    // Phosphor Icons (via JSDelivr - More reliable)
     if (!document.querySelector('script[src*="phosphor-icons"]')) {
         const script = document.createElement('script');
-        script.src = "https://unpkg.com/@phosphor-icons/web";
+        script.src = "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.0.3/src/index.min.js";
+        script.onerror = () => console.warn("OneUI: Icons failed to load. Check connection.");
         document.head.appendChild(script);
     }
 
-    // Lenis Smooth Scroll
+    // Lenis Smooth Scroll (via JSDelivr)
     if (!document.querySelector('script[src*="lenis"]')) {
         const script = document.createElement('script');
-        script.src = "https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js";
+        script.src = "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.29/dist/lenis.min.js";
         script.onload = initLenis;
+        script.onerror = () => console.warn("OneUI: Lenis failed to load.");
         document.head.appendChild(script);
     }
 }
@@ -26,30 +28,45 @@ function initLenis() {
         const lenis = new Lenis({
             duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical',
-            gestureDirection: 'vertical',
             smooth: true,
-            mouseMultiplier: 1,
-            smoothTouch: false,
-            touchMultiplier: 2,
         });
-
         function raf(time) {
             lenis.raf(time);
             requestAnimationFrame(raf);
         }
         requestAnimationFrame(raf);
-        console.log("OneUI: Smooth Scroll Enabled 🌊");
     }
 }
 
-// 3. Ripple Engine
+// 3. Navigation Handler (Fixes Refresh Bug)
+function initNav() {
+    const navItems = document.querySelectorAll('.oui-nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            // Prevent default anchor behavior (refresh/jump)
+            e.preventDefault();
+            
+            // Visual Active State
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+            
+            // Optional: Scroll to section if href is an ID
+            const targetId = item.getAttribute('href');
+            if (targetId && targetId.startsWith('#')) {
+                const targetEl = document.querySelector(targetId);
+                if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+}
+
+// 4. Ripple Engine
 function initRipples() {
     document.addEventListener('mousedown', createRipple);
     document.addEventListener('touchstart', createRipple, { passive: true });
 
     function createRipple(e) {
-        const target = e.target.closest('.oui-btn, .oui-item, .oui-chip, .oui-nav-item');
+        const target = e.target.closest('.oui-btn, .oui-item, .oui-nav-item');
         if (!target || target.disabled) return;
 
         const circle = document.createElement('span');
@@ -72,7 +89,7 @@ function initRipples() {
     }
 }
 
-// 4. Overlay Manager
+// 5. Overlay Manager
 export function toggleOverlay(id) {
     const el = document.getElementById(id);
     const backdrop = document.getElementById('oui-backdrop');
@@ -81,24 +98,10 @@ export function toggleOverlay(id) {
         el.classList.remove('active');
         backdrop.classList.remove('active');
     } else {
-        document.querySelectorAll('.oui-sheet.active, .oui-dialog.active').forEach(e => e.classList.remove('active'));
+        document.querySelectorAll('.oui-sheet.active').forEach(e => e.classList.remove('active'));
         el.classList.add('active');
         backdrop.classList.add('active');
     }
-}
-
-// 5. Tab Logic
-export function initTabs() {
-    const segments = document.querySelectorAll('.oui-segment-btn');
-    segments.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            const parent = btn.closest('.oui-segments');
-            const glider = parent.querySelector('.oui-segment-glider');
-            parent.querySelectorAll('.oui-segment-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            glider.style.transform = `translateX(${index * 100}%)`;
-        });
-    });
 }
 
 // 6. Theme Toggle
@@ -126,11 +129,12 @@ export function showToast(message) {
 
 // 8. Initialization
 export function initOneUI() {
-    console.log("OneUI v6.0 (Silk) Initialized 🚀");
+    console.log("OneUI v6.1 Initialized 🚀");
     loadDependencies();
     initRipples();
-    initTabs();
+    initNav();
     
+    // Create Backdrop
     if (!document.getElementById('oui-backdrop')) {
         const bd = document.createElement('div');
         bd.id = 'oui-backdrop';
@@ -141,12 +145,13 @@ export function initOneUI() {
         document.body.appendChild(bd);
     }
 
+    // Auto Dark Mode
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         document.documentElement.setAttribute('data-theme', 'dark');
     }
 }
 
-// 9. Global Export (Fixes SyntaxError)
+// Global Export
 window.OneUI = {
     init: initOneUI,
     toggleTheme: toggleTheme,
